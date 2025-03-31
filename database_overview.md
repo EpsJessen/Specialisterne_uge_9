@@ -106,7 +106,9 @@ v = from column to row
 ![ER before](Data/ER-before.png "ER before")
 
 ### ER Goal
-Better naming of columns (no id/name appended)  
+
+Better naming of columns (no id/name appended to FKs)  
 Added ID to staff, store  
 Removed duplicate data list_price
+
 ![ER Goal](Data/ER_goal.png "ER goal")
