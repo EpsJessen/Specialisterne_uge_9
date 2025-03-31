@@ -4,86 +4,86 @@
 
 ### API
 
-|CUSTOMERS|
-|---------|
-|customer_ID*|
-|first_name|
-|last_name|
-|phone|
-|email|
-|street|
-|city|
-|state|
-|zip_code|
+|CUSTOMERS|type |notes
+|---------|-| - |
+|customer_ID*| INT |
+|first_name|STR | NOT NULL|
+|last_name|STR|NOT NULL|
+|phone| STR| can be null|
+|email| STR| check that it conforms, (personal, if phone null this should not be)|
+|street| STR | fmt: nr, names; remove surrounding whitespace|
+|city| STR | NOT NULL? |
+|state| STR | NOT NULL|
+|zip_code| INT | NOT NULL?|
 
-| ORDER_ITEMS|
-|-|
-|order_id* *fk (ORDERS)*|
-|item_id*|
-|product_id *fk (PRODUCTS)*|
-|quantity|
-|list_price|
-|discount|
+| ORDER_ITEMS| type | note |
+|-|-|-|
+|order_id* *fk (ORDERS)*| INT |
+|item_id*| INT |
+|product_id *fk (PRODUCTS)*| INT |
+|quantity| INT |
+|list_price| FLOAT | not negative, should be removed since it is duplication |
+|discount| FLOAT | 0 < discount < 1, suspicious if too large, needs not be equal for order|
 
-| ORDERS|
-| - |
-|order_id*|
-|customer_id *fk (ORDERS)*|
-|order_status|
-|order_date|
-|required_date|
-|shipped_date|
-|store|
-|staff_name|
+| ORDERS| type | note |
+|-|-|-|
+|order_id*| INT|
+|customer_id *fk (CUSTOMERS)*| INT |
+|order_status|INT | code in [1,2,3,4]?|
+|order_date|DATE|
+|required_date|DATE|should not be before order_date |
+|shipped_date|DATE|should not be before order_date |
+|store *fk (STORES)*| STR |
+|staff_name *fk (STAFFS)*| STR | ensure it matches pk in staffs|
 
 ### CSV
 
-|STAFFS|
-|-|
-|name|
-|last_name|
-|email*|
-|phone|
-|active|
-|store_name *fk (STORES)*|
-|street|
-|manager|
+|STAFFS| type | note |
+|-|-|-|
+|name| STR | currently treated as pk |
+|last_name| STR |
+|email*| STR | work-email can be pk, ensure fmt|
+|phone| STR | NOT NULL?, work-nr? |
+|active| INT | active in [0,1] NOT NULL |
+|store_name *fk (STORES)*| STR | NOT NULL |
+|street| STR | NOT NULL, fmt: nr, name |
+|manager| INT | Can be null, probably refers to STAFFS, although numbers are a bit weird|
 
-|STORES|
-|-|
-|name*|
-|phone|
-|email|
-|street|
-|city|
-|state|
-|zip_code|
+|STORES| type | note |
+|-|-|-|
+|name*| STR | might be a bad pk |
+|phone| STR | NOT NULL
+|email| STR | NOT NULL, ensure fmt, UNIQUE |
+|street| STR | NOT NULL, UNIQUE, fmt: nr, name|
+|city| STR | NOT NULL|
+|state| STR | NOT NULL |
+|zip_code| INT | NOT NULL |
 ### DB
 
-|BRANDS|
-|-|
-| brand_id* |
-| brand_name |
+|BRANDS| type | note |
+|-|-|-|
+| brand_id* | INT | AUTOINCREMENT
+| brand_name | STR | NOT NULL, UNIQUE
 
-|CATEGORIES|
-|-|
-| category_id* |
-| category_name |
+|CATEGORIES| type | note |
+|-|-|-|
+| category_id* | INT | AUTOINCREMENT?|
+| category_name | STR | NOT NULL, UNIQUE |
 
-|PRODUCTS|
-|-|
-| product_id* |
-| product_name |
-| brand_id *fk (BRANDS)* |
-| category_id *fk (CATEGORIES)* |
-| model_year |
-| list_price |
+|PRODUCTS| type | note |
+|-|-|-|
+| product_id* | INT | AUTOINCREMENT |
+| product_name | STR | not unique, NOT NULL |
+| brand_id *fk (BRANDS)* | INT | NOT NULL |
+| category_id *fk (CATEGORIES)* | INT | NOT NULL |
+| model_year | INT | NOT NULL (should we include range - might have models for next year, could have old - though not likely)
+| list_price | FLOAT | NOT NULL, POSITIVE |
 
-|STOCKS|
-|-|
-| store_name* *fk (STORES)*|
-| product_id* *fk (PRODUCTS)*|
-| quantity |
+|STOCKS| type | note |
+|-|-|-|
+| store_name* *fk (STORES)*| STR | NOT NULL |
+| product_id* *fk (PRODUCTS)*| INT | NOT NULL |
+| quantity | INT | NOT NEGATIVE, NOT NULL |
 
 ## CONNECTIONS
 v = from column to row  
@@ -92,14 +92,14 @@ v = from column to row
 |------|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
 |CUST  |\ |-|v|-|-|-|-|-|-|
 |ORD_IT|-|\ |>|-|-|-|-|>|-|
-|ORD   |>|v|\ |-|-|-|-|-|-|
-|STAFF |-|-|-|\ |>|-|-|-|-|
-|STORE |-|-|-|v|\ |-|-|-|v|
+|ORD   |>|v|\ |>|>|-|-|-|-|
+|STAFF |-|-|v|\ |>|-|-|-|-|
+|STORE |-|-|v|v|\ |-|-|-|v|
 |BRAND |-|-|-|-|-|\ |-|v|-|
 |CAT   |-|-|-|-|-|-|\ |v|-|
 |PROD  |-|v|-|-|-|>|>|\ |v|
 |STOCK |-|-|-|-|>|-|-|>|\ |
 
 
-CUST <- ORD <- ORD_IT -> PROD (-> BRAND), (-> CAT)  
-STAFF -> STORE <- STOCK ----^
+(v--),(CUST <--), (v--) ORD <-- ORD_IT --> PROD (--> BRAND), (--> CAT)  
+STAFF --------> STORE <------- STOCK -------^
