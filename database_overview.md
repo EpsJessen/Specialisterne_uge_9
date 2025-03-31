@@ -101,5 +101,12 @@ v = from column to row
 |STOCK |-|-|-|-|>|-|-|>|\ |
 
 
-(v--),(CUST <--), (v--) ORD <-- ORD_IT --> PROD (--> BRAND), (--> CAT)  
-STAFF --------> STORE <------- STOCK -------^
+### ER before
+
+![ER before](Data/ER-before.png "ER before")
+
+### ER Goal
+Better naming of columns (no id/name appended)  
+Added ID to staff, store  
+Removed duplicate data list_price
+![ER Goal](Data/ER_goal.png "ER goal")
