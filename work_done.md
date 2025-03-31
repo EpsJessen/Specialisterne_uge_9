@@ -8,3 +8,21 @@
   - Better naming of columns (no id/name appended)
   - Add ID to staff, store
   - Remove duplicate data list_price
+- Built skeleton for files
+- Added credentials file
+
+- [ ] extract
+  - [ ] csv
+  - [ ] api
+  - [ ] db
+- [ ] transform
+  - [ ] csv
+  - [ ] api
+  - [ ] db
+- [ ] load
+  - [ ] Establish communication
+  - [ ] Create db
+  - [ ] csv
+  - [ ] api
+  - [ ] db
+- [ ] Collect all in `etl.py`
