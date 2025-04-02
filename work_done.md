@@ -10,11 +10,16 @@
   - Remove duplicate data list_price
 - Built skeleton for files
 - Added credentials file
+- To streamline, extract all files as polars DataFrames
+- All extractions done
+- Refactored to use one method to get paths
+- Transformation must be table specific
+  - However, certain information (e.g. new IDs) must be kept
 
-- [ ] extract
-  - [ ] csv
-  - [ ] api
-  - [ ] db
+- [x] extract
+  - [x] csv
+  - [x] api
+  - [x] db
 - [ ] transform
   - [ ] csv
   - [ ] api
@@ -26,3 +31,6 @@
   - [ ] api
   - [ ] db
 - [ ] Collect all in `etl.py`
+
+Decide how the flow of information should be through the system
+  
