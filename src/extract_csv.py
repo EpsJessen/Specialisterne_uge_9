@@ -2,7 +2,8 @@
 # This module will extract data from provided local
 #  CSV file
 #
-from os.path import join
+
+from get_path import csv_path
 from csv import reader
 import polars as pl
 
@@ -26,7 +27,7 @@ def extract_csv(path: str) -> pl.DataFrame:
 
 
 def main():
-    path = join("Data CSV", "staffs.csv")
+    path = csv_path("stores")
     try:
         staffs = extract_csv(path)
         print(staffs.head())

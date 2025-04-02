@@ -2,7 +2,7 @@
 # This module will extract data from database given
 #  credentials
 #
-from os.path import join
+from get_path import credentials_path as cred_path
 import json
 import mysql.connector
 import mysql.connector.cursor
@@ -53,7 +53,7 @@ def extract_db(credentials_path: str, table: str) -> pl.DataFrame:
 
 
 def main():
-    credentials_path = join("Data", "communication.json")
+    credentials_path = cred_path()
 
     res = extract_db(credentials_path, "PRODUCTS")
     print(res.head(10))

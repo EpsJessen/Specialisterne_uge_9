@@ -5,7 +5,7 @@
 import requests
 import polars as pl
 import json
-from os.path import join
+from get_path import credentials_path as cred_path
 
 
 def api_get(ip: str, port: int, dataset: str) -> pl.DataFrame:
@@ -53,12 +53,12 @@ def extract_api(credentials_path: str, dataset: str) -> pl.DataFrame:
 
 
 def main():
-    cred_path = join("Data", "communication.json")
+    creds = cred_path()
     try:
-        customers = extract_api(cred_path, "customers")
+        customers = extract_api(creds, "orders")
         print(customers.head())
     except:
-        print(f"Could not get data from {cred_path}")
+        print(f"Could not get data from {creds}")
 
 
 if __name__ == "__main__":
