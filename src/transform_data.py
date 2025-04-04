@@ -28,6 +28,10 @@ def add_ID(table: pl.DataFrame) -> pl.DataFrame:
     return table.with_row_index("id", offset=1)
 
 
+def remove_column(table: pl.DataFrame, row: str) -> pl.DataFrame:
+    return table.drop(row)
+
+
 def main():
     # EXTRACT
     staffs = extract.extract("staffs")
