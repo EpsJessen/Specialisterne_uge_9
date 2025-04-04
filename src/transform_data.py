@@ -62,6 +62,12 @@ def replace_values_in_column(table: pl.DataFrame, column: str, old, new) -> pl.D
     return table.replace_column(index, new_column)
 
 
+def change_data_type(
+    table: pl.DataFrame, column: str, type: pl.DataType
+) -> pl.DataFrame:
+    return table.with_columns(pl.col(column).cast(type, strict=False))
+
+
 def main():
     # EXTRACT
     staffs = extract.extract("staffs")
