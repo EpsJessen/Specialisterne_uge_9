@@ -32,7 +32,7 @@ def db_connection(
     return connection
 
 
-def extract_db(table: str, credentials_path: str|None = cred_path()) -> pl.DataFrame:
+def extract_db(table: str, path: str|None = cred_path()) -> pl.DataFrame:
     """Returns DataFrame of table from database
 
     Args:
@@ -42,10 +42,10 @@ def extract_db(table: str, credentials_path: str|None = cred_path()) -> pl.DataF
     Returns:
         pl.DataFrame: Polars DataFrame of the extracted data
     """
-    if credentials_path == None:
-        credentials_path = cred_path()
+    if path == None:
+        path = cred_path()
 
-    connection = db_connection(credentials_path)
+    connection = db_connection(path)
     cursor = connection.cursor()
     cursor.execute(f"SELECT * FROM {table}")
     headers = list(cursor.column_names)

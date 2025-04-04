@@ -35,7 +35,7 @@ def api_get(ip: str, port: int, dataset: str) -> pl.DataFrame:
         raise ConnectionError
 
 
-def extract_api(table: str, credentials_path: str|None = cred_path()) -> pl.DataFrame:
+def extract_api(table: str, path: str|None = cred_path()) -> pl.DataFrame:
     """Gets credentials and uses them to extract dataset from API
 
     Args:
@@ -45,10 +45,10 @@ def extract_api(table: str, credentials_path: str|None = cred_path()) -> pl.Data
     Returns:
         pl.DataFrame: polars Dataframe with the extracted data
     """
-    if credentials_path == None:
-        credentials_path = cred_path()
+    if path == None:
+        path = cred_path()
 
-    with open(credentials_path) as credentials_file:
+    with open(path) as credentials_file:
         json_credentials = credentials_file.read()
     credentials = json.loads(json_credentials)
     return api_get(credentials["IP"], credentials["API"]["PORT"], table)
