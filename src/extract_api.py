@@ -35,30 +35,32 @@ def api_get(ip: str, port: int, dataset: str) -> pl.DataFrame:
         raise ConnectionError
 
 
-def extract_api(credentials_path: str, dataset: str) -> pl.DataFrame:
+def extract_api(table: str, credentials_path: str|None = cred_path()) -> pl.DataFrame:
     """Gets credentials and uses them to extract dataset from API
 
     Args:
-        credentials_path (str): Path to credentials
+        credentials_path (str|None): Path to credentials
         dataset (str): Endpoint of the dataset on the the API
 
     Returns:
         pl.DataFrame: polars Dataframe with the extracted data
     """
+    if credentials_path == None:
+        credentials_path = cred_path()
 
     with open(credentials_path) as credentials_file:
         json_credentials = credentials_file.read()
     credentials = json.loads(json_credentials)
-    return api_get(credentials["IP"], credentials["API"]["PORT"], dataset)
+    return api_get(credentials["IP"], credentials["API"]["PORT"], table)
 
 
 def main():
     creds = cred_path()
     try:
-        customers = extract_api(creds, "orders")
+        customers = extract_api("orders")
         print(customers.head())
     except:
-        print(f"Could not get data from {creds}")
+        print(f"Could not connect to server")
 
 
 if __name__ == "__main__":
