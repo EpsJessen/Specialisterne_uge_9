@@ -17,6 +17,14 @@ def transform_order_items(
     return order_items
 
 
+def transform_orders(
+    orders: pl.DataFrame, staffs: pl.DataFrame, stores: pl.DataFrame
+) -> pl.DataFrame:
+    orders = change_to_foreign_ID(orders, staffs, "staff_name", "staff", "first_name")
+    orders = change_to_foreign_ID(orders, stores, "store", "store", "name")
+    return orders
+
+
 def transform_staffs(staffs: pl.DataFrame, stores: pl.DataFrame) -> pl.DataFrame:
     staffs = add_ID(staffs)
     staffs = change_to_foreign_ID(staffs, stores, "store_name", "store", "name", "id")
