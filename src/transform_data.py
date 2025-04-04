@@ -10,6 +10,13 @@ def transform_customers(customers: pl.DataFrame) -> pl.DataFrame:
     return customers
 
 
+def transform_order_items(
+    order_items: pl.DataFrame, orders: pl.DataFrame, stores: pl.DataFrame
+) -> pl.DataFrame:
+    order_items = remove_column(order_items, "list_price")
+    return order_items
+
+
 def transform_stores(stores: pl.DataFrame) -> pl.DataFrame:
     stores = add_ID(stores)
     return stores
