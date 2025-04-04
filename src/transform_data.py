@@ -2,7 +2,7 @@
 # This module will transform data received from API calls
 #
 import polars as pl
-import extract
+import extract_data
 from os.path import join
 from table_order_and_keys import get_order
 
@@ -145,24 +145,24 @@ def main():
     api_tables = ["customers", "order_items", "orders"]
 
     for name in csv_tables:
-        table_dict[name] = extract.extract(name)
+        table_dict[name] = extract_data.extract(name)
 
     for name in db_tables:
         try:
-            table_dict[name] = extract.extract(name)
+            table_dict[name] = extract_data.extract(name)
         except:
             print(f"Could not extract table `{name}` from server!")
-            table_dict[name] = extract.extract(
-                name, type=extract.TableTypes.CSV, location="Data DB"
+            table_dict[name] = extract_data.extract(
+                name, type=extract_data.TableTypes.CSV, location="Data DB"
             )
 
     for name in api_tables:
         try:
-            table_dict[name] = extract.extract(name)
+            table_dict[name] = extract_data.extract(name)
         except:
             print(f"Could not extract table `{name}` from server!")
-            table_dict[name] = extract.extract(
-                name, type=extract.TableTypes.CSV, location=join("Data API", "data")
+            table_dict[name] = extract_data.extract(
+                name, type=extract_data.TableTypes.CSV, location=join("Data API", "data")
             )
 
     t_dict = transform_all(table_dict)
