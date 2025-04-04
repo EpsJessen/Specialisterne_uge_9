@@ -23,6 +23,7 @@ def transform_staffs(staffs: pl.DataFrame, stores: pl.DataFrame) -> pl.DataFrame
     staffs = remove_column(staffs, "street")
     staffs = replace_values_in_column(staffs, "manager_id", 7, 8)
     staffs = change_data_type(staffs, "manager_id", pl.UInt32)
+    staffs = change_column_name(staffs, "name", "first_name")
     return staffs
 
 
