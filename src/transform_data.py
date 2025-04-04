@@ -56,6 +56,12 @@ def change_to_foreign_ID(
     return table
 
 
+def replace_values_in_column(table: pl.DataFrame, column: str, old, new) -> pl.DataFrame:
+    new_column = table[column].replace(old, new)
+    index = table.get_column_index(column)
+    return table.replace_column(index, new_column)
+
+
 def main():
     # EXTRACT
     staffs = extract.extract("staffs")
