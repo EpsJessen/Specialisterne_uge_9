@@ -68,6 +68,12 @@ def change_data_type(
     return table.with_columns(pl.col(column).cast(type, strict=False))
 
 
+def change_column_name(
+    table: pl.DataFrame, old_name: str, new_name: str
+) -> pl.DataFrame:
+    return table.rename({old_name: new_name})
+
+
 def main():
     # EXTRACT
     staffs = extract.extract("staffs")
