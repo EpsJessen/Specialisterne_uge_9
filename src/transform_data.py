@@ -18,6 +18,12 @@ def transform_categories(categories: pl.DataFrame) -> pl.DataFrame:
     return categories
 
 
+def transform_products(
+    products: pl.DataFrame, brands: pl.DataFrame, categories: pl.DataFrame
+) -> pl.DataFrame:
+    return products
+
+
 def main():
     # EXTRACT
     staffs = extract.extract("staffs")
