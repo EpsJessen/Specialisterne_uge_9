@@ -20,8 +20,8 @@ class Connector:
     _passwd: str
     dbname: str
 
-    def __init__(self, dbname: str = "orders", exists: bool = True):
-        credentials_file = join("credentials.json")
+    def __init__(self, credentials_file, dbname: str = "orders", exists: bool = True):
+        
         with open(credentials_file) as json_credentials:
             credentials: dict = json.load(json_credentials)
         self.host = credentials.get("host")
@@ -100,7 +100,8 @@ class Connector:
 
 
 def main():
-    orders_connector = Connector(exists=False)
+    creds = join("Data", "my_db.json")
+    orders_connector = Connector(credentials_file=creds, dbname="bikes", exists=False)
 
 
 if __name__ == "__main__":
