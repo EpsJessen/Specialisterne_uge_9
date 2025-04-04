@@ -17,6 +17,11 @@ def transform_order_items(
     return order_items
 
 
+def transform_staffs(staffs: pl.DataFrame, stores: pl.DataFrame) -> pl.DataFrame:
+    staffs = add_ID(staffs)
+    return staffs
+
+
 def transform_stores(stores: pl.DataFrame) -> pl.DataFrame:
     stores = add_ID(stores)
     return stores
