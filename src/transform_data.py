@@ -29,6 +29,13 @@ def transform_products(
     return products
 
 
+def transform_stocks(
+    stocks: pl.DataFrame, products: pl.DataFrame, stores: pl.DataFrame
+) -> pl.DataFrame:
+    stocks = change_to_foreign_ID(stocks, stores, "store_name", "store", "name")
+    return stocks
+
+
 def add_ID(table: pl.DataFrame) -> pl.DataFrame:
     return table.with_row_index("id", offset=1)
 
