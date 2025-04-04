@@ -21,6 +21,7 @@ def transform_staffs(staffs: pl.DataFrame, stores: pl.DataFrame) -> pl.DataFrame
     staffs = add_ID(staffs)
     staffs = change_to_foreign_ID(staffs, stores, "store_name", "store", "name", "id")
     staffs = remove_column(staffs, "street")
+    staffs = replace_values_in_column(staffs, "manager_id", 7, 8)
     return staffs
 
 
