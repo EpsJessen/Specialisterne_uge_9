@@ -10,6 +10,11 @@ def transform_customers(customers: pl.DataFrame) -> pl.DataFrame:
     return customers
 
 
+def transform_stores(stores: pl.DataFrame) -> pl.DataFrame:
+    stores = add_ID(stores)
+    return stores
+
+
 def transform_brands(brands: pl.DataFrame) -> pl.DataFrame:
     return brands
 
