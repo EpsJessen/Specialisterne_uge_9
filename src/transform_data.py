@@ -37,6 +37,25 @@ def remove_column(table: pl.DataFrame, row: str) -> pl.DataFrame:
     return table.drop(row)
 
 
+def change_to_foreign_ID(
+    table: pl.DataFrame,
+    foreign_table: pl.DataFrame,
+    old_column: str,
+    new_column: str,
+    old_foreign_column: str,
+    new_foreign_column: str = "id",
+) -> pl.DataFrame:
+    limit_ft = foreign_table[[old_foreign_column, new_foreign_column]]
+    limit_t = table[[old_column]]
+    matches = limit_t.join(
+        limit_ft, how="left", left_on=old_column, right_on=old_foreign_column
+    )[new_foreign_column]
+    table = table.with_columns(matches.alias(new_column))
+    if old_column != new_column:
+        table = remove_column(table, old_column)
+    return table
+
+
 def main():
     # EXTRACT
     staffs = extract.extract("staffs")
