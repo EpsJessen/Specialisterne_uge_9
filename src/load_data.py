@@ -2,21 +2,36 @@
 # This module will load transformed data from database to local database
 #
 import polars as pl
+import communicate_db
+import transform_data
+from os.path import join
+import json
 
 
-def create_table(
-    name: str, columns: list[str],
-    pks: list[str], fks: list[dict[str, str]]
-) -> None:
-    pass
-
-
-def load_table(data: pl.DataFrame, name: str) -> None:
-    pass
+def load_table(data: pl.DataFrame, name: str, credentials) -> None:
+    with open(credentials) as json_credentials:
+        creds: dict = json.load(json_credentials)
+    uri = f"mysql://{creds["user"]}:{creds["passwd"]}@localhost:3306/bikes"
+    data.write_database(table_name=name, connection=uri, if_table_exists="append")
 
 
 def main():
-    pass
+    creds = join("Data", "my_db.json")
+    tables = transform_data.main()
+    order = [
+        "customers",
+        "brands",
+        "categories",
+        "stores",
+        "products",
+        "stocks",
+        "staffs",
+        "orders",
+        "order_items",
+    ]
+
+    for name in order:
+        load_table(tables[name], name, creds)
 
 
 if __name__ == "__main__":
