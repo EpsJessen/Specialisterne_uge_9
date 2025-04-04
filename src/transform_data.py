@@ -5,6 +5,19 @@ import polars as pl
 import extract
 from os.path import join
 
+
+def transform_customers(customers: pl.DataFrame) -> pl.DataFrame:
+    return customers
+
+
+def transform_brands(brands: pl.DataFrame) -> pl.DataFrame:
+    return brands
+
+
+def transform_categories(categories: pl.DataFrame) -> pl.DataFrame:
+    return categories
+
+
 def main():
     # EXTRACT
     staffs = extract.extract("staffs")
