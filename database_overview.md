@@ -46,7 +46,7 @@
 |phone| STR | NOT NULL?, work-nr? |
 |active| INT | active in [0,1] NOT NULL |
 |store_name *fk (STORES)*| STR | NOT NULL |
-|street| STR | NOT NULL, fmt: nr, name |
+|street| STR | should be removed as it is data duplication with STORES|
 |manager| INT | Can be null, probably refers to STAFFS, although numbers are a bit weird|
 
 |STORES| type | note |
