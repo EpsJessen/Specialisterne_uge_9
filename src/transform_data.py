@@ -14,6 +14,8 @@ def transform_order_items(
     order_items: pl.DataFrame, orders: pl.DataFrame, stores: pl.DataFrame
 ) -> pl.DataFrame:
     order_items = remove_column(order_items, "list_price")
+    order_items = change_column_name(order_items, "order_id", "order")
+    order_items = change_column_name(order_items, "item_id", "item_nr")
     return order_items
 
 
@@ -58,6 +60,7 @@ def transform_stocks(
     stocks: pl.DataFrame, products: pl.DataFrame, stores: pl.DataFrame
 ) -> pl.DataFrame:
     stocks = change_to_foreign_ID(stocks, stores, "store_name", "store", "name")
+    stocks = change_column_name(stocks, "product_id", "product")
     return stocks
 
 
@@ -88,7 +91,9 @@ def change_to_foreign_ID(
     return table
 
 
-def replace_values_in_column(table: pl.DataFrame, column: str, old, new) -> pl.DataFrame:
+def replace_values_in_column(
+    table: pl.DataFrame, column: str, old, new
+) -> pl.DataFrame:
     new_column = table[column].replace(old, new)
     index = table.get_column_index(column)
     return table.replace_column(index, new_column)
@@ -106,38 +111,84 @@ def change_column_name(
     return table.rename({old_name: new_name})
 
 
+def my_etl_transform(tables: dict[str : pl.DataFrame]) -> dict[str : pl.DataFrame]:
+    # TRANSFORM
+    stores = transform_stores(tables["stores"])
+    staffs = transform_staffs(tables["staffs"], stores)
+    customers = transform_customers(tables["customers"])
+    orders = transform_orders(tables["orders"], staffs, stores)
+    brands = transform_brands(tables["brands"])
+    categories = transform_categories(tables["categories"])
+    products = transform_products(tables["products"], brands, categories)
+    stocks = transform_stocks(tables["stocks"], products, stores)
+    order_items = transform_order_items(tables["order_items"], orders, stores)
+    # print(orders)
+    return {
+        "stores": stores,
+        "staffs": staffs,
+        "customers": customers,
+        "orders": orders,
+        "brands": brands,
+        "categories": categories,
+        "products": products,
+        "stocks": stocks,
+        "order_items": order_items,
+    }
+
+
 def main():
     # EXTRACT
-    staffs = extract.extract("staffs")
-    stores = extract.extract("stores")
-    brands = extract.extract("brands", type=extract.TableTypes.CSV, location="Data DB")
-    categories = extract.extract(
-        "categories", type=extract.TableTypes.CSV, location="Data DB"
-    )
-    products = extract.extract(
-        "products", type=extract.TableTypes.CSV, location="Data DB"
-    )
-    stocks = extract.extract("stocks", type=extract.TableTypes.CSV, location="Data DB")
-    customers = extract.extract(
-        "customers", type=extract.TableTypes.CSV, location=join("Data API", "data")
-    )
-    order_items = extract.extract(
-        "order_items", type=extract.TableTypes.CSV, location=join("Data API", "data")
-    )
-    orders = extract.extract(
-        "orders", type=extract.TableTypes.CSV, location=join("Data API", "data")
-    )
-    # TRANSFORM
-    stores = transform_stores(stores)
-    staffs = transform_staffs(staffs, stores)
-    customers = transform_customers(customers)
-    orders = transform_orders(orders, staffs, stores)
-    brands = transform_brands(brands)
-    categories = transform_categories(categories)
-    products = transform_products(products, brands, categories)
-    stocks = transform_stocks(stocks, products, stores)
-    order_items = transform_order_items(order_items, orders, stores)
-    print(order_items)
+    table_dict = {}
+    table_dict["staffs"] = extract.extract("staffs")
+    table_dict["stores"] = extract.extract("stores")
+    try:
+        table_dict["brands"] = extract.extract("brands")
+    except:
+        table_dict["brands"] = extract.extract(
+            "brands", type=extract.TableTypes.CSV, location="Data DB"
+        )
+    try:
+        table_dict["categories"] = extract.extract("categories")
+    except:
+        table_dict["categories"] = extract.extract(
+            "categories", type=extract.TableTypes.CSV, location="Data DB"
+        )
+    try:
+        table_dict["products"] = extract.extract("products")
+    except:
+        table_dict["products"] = extract.extract(
+            "products", type=extract.TableTypes.CSV, location="Data DB"
+        )
+    try:
+        table_dict["stocks"] = extract.extract("stocks")
+    except:
+        table_dict["stocks"] = extract.extract(
+            "stocks", type=extract.TableTypes.CSV, location="Data DB"
+        )
+    try:
+        table_dict["customers"] = extract.extract("customers")
+    except:
+        table_dict["customers"] = extract.extract(
+            "customers", type=extract.TableTypes.CSV, location=join("Data API", "data")
+        )
+    try:
+        table_dict["order_items"] = extract.extract("order_items")
+    except:
+        table_dict["order_items"] = extract.extract(
+            "order_items",
+            type=extract.TableTypes.CSV,
+            location=join("Data API", "data"),
+        )
+    try:
+        table_dict["orders"] = extract.extract("orders")
+    except:
+        table_dict["orders"] = extract.extract(
+            "orders", type=extract.TableTypes.CSV, location=join("Data API", "data")
+        )
+    t_dict = my_etl_transform(table_dict)
+
+    # print(t_dict["stocks"])
+    return t_dict
 
 
 if __name__ == "__main__":
