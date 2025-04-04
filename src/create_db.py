@@ -9,6 +9,7 @@ import csv
 from datetime import datetime
 import polars as pl
 import transform_data
+import table_order_and_keys
 
 
 # Class for creating a database from a polars df using an instance of the
@@ -54,7 +55,6 @@ class DBFromPl:
 
         # Creates full query
         create_table_stmnt = f"CREATE TABLE {table_name}({fields});"
-        print(create_table_stmnt)
         # Drops table if it already exists in the schema, and then adds
         # current version
         self._connector.executeCUD(f"DROP TABLE IF EXISTS {table_name}")
@@ -87,7 +87,7 @@ class DBFromPl:
                 return "VARCHAR(250)"
 
 
-def main():
+def create_db(order: list[str], pks:dict[str,list[str]], fks:dict[None|list[dict]]):
     creds = join("Data", "my_db.json")
     db = DBFromPl(credentials_file=creds, schema="bikes")
     # db.make_populated_table("Orders_combined", "orders_combined.csv")
@@ -111,60 +111,16 @@ def main():
     #    ],
     # )
     tables = transform_data.main()
-    order = [
-        "customers",
-        "brands",
-        "categories",
-        "stores",
-        "products",
-        "stocks",
-        "staffs",
-        "orders",
-        "order_items",
-    ]
-    pks = {
-        "customers": ["customer_id"],
-        "brands": ["brand_id"],
-        "categories": ["category_id"],
-        "stores": ["id"],
-        "products": ["product_id"],
-        "stocks": ["store", "product"],
-        "staffs": ["id"],
-        "orders": ["order_id"],
-        "order_items": ["order", "item_nr"],
-    }
-    fks = {
-        "customers": None,
-        "brands": None,
-        "categories": None,
-        "stores": None,
-        "products": [
-            {"table": "brands", "key": "brand_id", "fk": "brand_id"},
-            {"table": "categories", "key": "category_id", "fk": "category_id"},
-        ],
-        "stocks": [
-            {"table": "stores", "key": "id", "fk": "store"},
-            {"table": "products", "key": "product_id", "fk": "product"},
-        ],
-        "staffs": [
-            {"table": "stores", "key": "id", "fk": "store"},
-            {"table": "staffs", "key": "id", "fk": "manager_id"},
-        ],
-        "orders": [
-            {"table": "stores", "key": "id", "fk": "store"},
-            {"table": "staffs", "key": "id", "fk": "staff"},
-            {"table": "customers", "key": "customer_id", "fk": "customer_id"},
-        ],
-        "order_items": [
-            {"table": "orders", "key": "order_id", "fk": "order"},
-            {"table": "products", "key": "product_id", "fk": "product_id"},
-        ],
-    }
     for name in order:
         df = tables[name]
-        print(df.head(2))
         db.add_table(name, df.columns, df.dtypes, pks=pks[name], fk_dicts=fks[name])
 
+
+def main():
+    order = table_order_and_keys.get_order()
+    pks = table_order_and_keys.get_pks()
+    fks = table_order_and_keys.get_fks()
+    create_db(order,pks,fks)
 
 if __name__ == "__main__":
     main()
