@@ -44,7 +44,7 @@ def main():
     staff_df = extract("staffs")
     print(staff_df.head())
 
-    brands_df = extract("brands", type=TableTypes.CSV, location="Data DB")
+    brands_df = extract("brands")
     print(brands_df.head())
 
 
