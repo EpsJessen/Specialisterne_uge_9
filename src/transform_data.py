@@ -128,6 +128,17 @@ def main():
         "orders", type=extract.TableTypes.CSV, location=join("Data API", "data")
     )
     # TRANSFORM
+    stores = transform_stores(stores)
+    staffs = transform_staffs(staffs, stores)
+    customers = transform_customers(customers)
+    orders = transform_orders(orders, staffs, stores)
+    brands = transform_brands(brands)
+    categories = transform_categories(categories)
+    products = transform_products(products, brands, categories)
+    stocks = transform_stocks(stocks, products, stores)
+    order_items = transform_order_items(order_items, orders, stores)
+    print(order_items)
+
 
 if __name__ == "__main__":
     main()
