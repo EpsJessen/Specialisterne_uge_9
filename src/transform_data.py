@@ -4,6 +4,7 @@
 import polars as pl
 import extract
 from os.path import join
+from table_order_and_keys import get_order
 
 
 def transform_customers(customers: pl.DataFrame) -> pl.DataFrame:
@@ -111,7 +112,7 @@ def change_column_name(
     return table.rename({old_name: new_name})
 
 
-def my_etl_transform(tables: dict[str : pl.DataFrame]) -> dict[str : pl.DataFrame]:
+def transform_all(tables: dict[str : pl.DataFrame]) -> dict[str : pl.DataFrame]:
     # TRANSFORM
     stores = transform_stores(tables["stores"])
     staffs = transform_staffs(tables["staffs"], stores)
@@ -139,55 +140,34 @@ def my_etl_transform(tables: dict[str : pl.DataFrame]) -> dict[str : pl.DataFram
 def main():
     # EXTRACT
     table_dict = {}
-    table_dict["staffs"] = extract.extract("staffs")
-    table_dict["stores"] = extract.extract("stores")
-    try:
-        table_dict["brands"] = extract.extract("brands")
-    except:
-        table_dict["brands"] = extract.extract(
-            "brands", type=extract.TableTypes.CSV, location="Data DB"
-        )
-    try:
-        table_dict["categories"] = extract.extract("categories")
-    except:
-        table_dict["categories"] = extract.extract(
-            "categories", type=extract.TableTypes.CSV, location="Data DB"
-        )
-    try:
-        table_dict["products"] = extract.extract("products")
-    except:
-        table_dict["products"] = extract.extract(
-            "products", type=extract.TableTypes.CSV, location="Data DB"
-        )
-    try:
-        table_dict["stocks"] = extract.extract("stocks")
-    except:
-        table_dict["stocks"] = extract.extract(
-            "stocks", type=extract.TableTypes.CSV, location="Data DB"
-        )
-    try:
-        table_dict["customers"] = extract.extract("customers")
-    except:
-        table_dict["customers"] = extract.extract(
-            "customers", type=extract.TableTypes.CSV, location=join("Data API", "data")
-        )
-    try:
-        table_dict["order_items"] = extract.extract("order_items")
-    except:
-        table_dict["order_items"] = extract.extract(
-            "order_items",
-            type=extract.TableTypes.CSV,
-            location=join("Data API", "data"),
-        )
-    try:
-        table_dict["orders"] = extract.extract("orders")
-    except:
-        table_dict["orders"] = extract.extract(
-            "orders", type=extract.TableTypes.CSV, location=join("Data API", "data")
-        )
-    t_dict = my_etl_transform(table_dict)
+    csv_tables = ["staffs", "stores"]
+    db_tables = ["brands", "categories", "products", "stocks"]
+    api_tables = ["customers", "order_items", "orders"]
 
-    # print(t_dict["stocks"])
+    for name in csv_tables:
+        table_dict[name] = extract.extract(name)
+
+    for name in db_tables:
+        try:
+            table_dict[name] = extract.extract(name)
+        except:
+            print(f"Could not extract table `{name}` from server!")
+            table_dict[name] = extract.extract(
+                name, type=extract.TableTypes.CSV, location="Data DB"
+            )
+
+    for name in api_tables:
+        try:
+            table_dict[name] = extract.extract(name)
+        except:
+            print(f"Could not extract table `{name}` from server!")
+            table_dict[name] = extract.extract(
+                name, type=extract.TableTypes.CSV, location=join("Data API", "data")
+            )
+
+    t_dict = transform_all(table_dict)
+
+    print(t_dict["stocks"])
     return t_dict
 
 
