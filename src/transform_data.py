@@ -24,6 +24,10 @@ def transform_products(
     return products
 
 
+def add_ID(table: pl.DataFrame) -> pl.DataFrame:
+    return table.with_row_index("id", offset=1)
+
+
 def main():
     # EXTRACT
     staffs = extract.extract("staffs")
