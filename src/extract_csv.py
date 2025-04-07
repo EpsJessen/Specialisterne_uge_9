@@ -10,16 +10,14 @@ from os.path import join
 
 
 def extract_csv(table: str, path: str|None = None) -> pl.DataFrame:
-    """Extracts data from csv file returning extracted data as a list
-    of lists of strings
+    """Extracts data from csv file returning extracted data as a polars DataFrame
 
     Args:
         table (str): the name of the csv file containing the table
         path (str): the path to the folder where the csv file is stored
 
     Returns:
-        list[list[str]]: A list where each sublist is a row of the file
-        with each string corresponding to an entry in the file
+        pl.DataFrame: polars DataFrame
 
     Exceptions:
         FileNotFoundError: If the file is not located at the specified
