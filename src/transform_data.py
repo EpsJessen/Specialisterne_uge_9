@@ -144,30 +144,9 @@ def transform_all(tables: dict[str : pl.DataFrame]) -> dict[str : pl.DataFrame]:
 def main():
     # EXTRACT
     table_dict = {}
-    csv_tables = ["staffs", "stores"]
-    db_tables = ["brands", "categories", "products", "stocks"]
-    api_tables = ["customers", "order_items", "orders"]
-
-    for name in csv_tables:
-        table_dict[name] = extract_data.extract(name)
-
-    for name in db_tables:
-        try:
-            table_dict[name] = extract_data.extract(name)
-        except:
-            print(f"Could not extract table `{name}` from server!")
-            table_dict[name] = extract_data.extract(
-                name, type=extract_data.TableTypes.CSV, location="Data DB"
-            )
-
-    for name in api_tables:
-        try:
-            table_dict[name] = extract_data.extract(name)
-        except:
-            print(f"Could not extract table `{name}` from server!")
-            table_dict[name] = extract_data.extract(
-                name, type=extract_data.TableTypes.CSV, location=join("Data API", "data")
-            )
+    tables = get_order()
+    for name in tables:
+        table_dict[name] = extract_data.extract_fallback(name)
 
     t_dict = transform_all(table_dict)
 
