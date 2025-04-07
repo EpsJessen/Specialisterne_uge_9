@@ -53,7 +53,6 @@ def extract(
 def extract_fallback(table: str):
     if table in ["staffs", "stores"]:
         return extract(table)
-
     elif table in ["customers", "order_items", "orders"]:
         try:
             return extract(table)
