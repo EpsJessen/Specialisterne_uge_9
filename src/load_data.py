@@ -4,7 +4,7 @@
 import polars as pl
 import communicate_db
 import transform_data
-from os.path import join
+from get_path import my_creds_path
 import json
 from table_order_and_keys import get_order
 
