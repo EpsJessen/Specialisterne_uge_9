@@ -2,7 +2,6 @@
 # This module will load transformed data from database to local database
 #
 import polars as pl
-import communicate_db
 import transform_data
 from get_path import my_creds_path
 import json
@@ -17,7 +16,7 @@ def load_table(data: pl.DataFrame, name: str, credentials) -> None:
 
 
 def populate_tables(order: list[str], tables: dict[str, pl.DataFrame]):
-    creds = join("Data", "my_db.json")
+    creds = my_creds_path()
     for name in order:
         load_table(tables[name], name, creds)
 
