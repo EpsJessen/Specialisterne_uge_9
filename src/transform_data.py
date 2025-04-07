@@ -14,7 +14,7 @@ def transform_customers(customers: pl.DataFrame) -> pl.DataFrame:
 
 
 def transform_order_items(
-    order_items: pl.DataFrame, orders: pl.DataFrame, stores: pl.DataFrame
+    order_items: pl.DataFrame, orders: pl.DataFrame, products: pl.DataFrame
 ) -> pl.DataFrame:
     """Performs transformation on order_items using related tables"""
     # List_price is duplicated from products
@@ -109,7 +109,7 @@ def transform_all(tables: dict[str : pl.DataFrame]) -> dict[str : pl.DataFrame]:
     categories = transform_categories(tables["categories"])
     products = transform_products(tables["products"], brands, categories)
     stocks = transform_stocks(tables["stocks"], products, stores)
-    order_items = transform_order_items(tables["order_items"], orders, stores)
+    order_items = transform_order_items(tables["order_items"], orders, products)
     # print(orders)
     return {
         "stores": stores,
