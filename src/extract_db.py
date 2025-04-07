@@ -47,7 +47,6 @@ def extract_db(table: str, path: str | None = cred_path()) -> pl.DataFrame:
     """
     if path == None:
         path = cred_path()
-
     try:
         connection = db_connection(path)
     except:
@@ -58,7 +57,9 @@ def extract_db(table: str, path: str | None = cred_path()) -> pl.DataFrame:
     return table
 
 
-def extract_db_polars(table: str, path: str | None = cred_path()) -> pl.DataFrame:
+def extract_db_uri(table: str, path: str | None = cred_path()) -> pl.DataFrame:
+    # Use uri framwork to extract db
+    # Not used since Timeout cannot be set
     if path == None:
         path = cred_path()
     with open(path) as json_credentials:
