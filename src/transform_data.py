@@ -54,6 +54,7 @@ def transform_categories(categories: pl.DataFrame) -> pl.DataFrame:
 def transform_products(
     products: pl.DataFrame, brands: pl.DataFrame, categories: pl.DataFrame
 ) -> pl.DataFrame:
+    products = round_floats(products, "list_price")
     return products
 
 
@@ -98,6 +99,9 @@ def replace_values_in_column(
     new_column = table[column].replace(old, new)
     index = table.get_column_index(column)
     return table.replace_column(index, new_column)
+
+def round_floats(table: pl.DataFrame, column: str, decimals: int = 2) -> pl.DataFrame:
+    return table.with_columns(pl.col(column).round(decimals))
 
 
 def change_data_type(
@@ -167,7 +171,7 @@ def main():
 
     t_dict = transform_all(table_dict)
 
-    print(t_dict["stocks"])
+    print(t_dict["brands"].head(10))
     return t_dict
 
 
