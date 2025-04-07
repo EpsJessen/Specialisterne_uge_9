@@ -65,7 +65,12 @@ def extract_db_polars(table:str, path: str|None = cred_path()) -> pl.DataFrame:
         creds: dict = json.load(json_credentials)
     uri = f"mysql://{creds["SQL"]["USER"]}:{creds["SQL"]["PW"]}@{creds["IP"]}:{creds["SQL"]["PORT"]}/ProductDB"
     query = f"SELECT * FROM {table}"
-    return pl.read_database_uri(query=query, uri=uri, engine="connectorx")
+    try:
+        table = pl.read_database_uri(query=query, uri=uri, engine="connectorx")
+        return table
+    except:
+        print("Could not connect to db")
+        raise ConnectionError
 
 def main():
     credentials_path = cred_path()
