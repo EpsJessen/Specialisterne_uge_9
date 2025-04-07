@@ -100,6 +100,7 @@ def replace_values_in_column(
     index = table.get_column_index(column)
     return table.replace_column(index, new_column)
 
+
 def round_floats(table: pl.DataFrame, column: str, decimals: int = 2) -> pl.DataFrame:
     return table.with_columns(pl.col(column).round(decimals))
 
@@ -148,8 +149,10 @@ def main():
     for name in tables:
         table_dict[name] = extract_data.extract_fallback(name)
 
+    # TRANSFORM
     t_dict = transform_all(table_dict)
 
+    # INSPECT
     print(t_dict["brands"].head(10))
     return t_dict
 
