@@ -54,11 +54,8 @@ def extract_db(table: str, path: str|None = cred_path()) -> pl.DataFrame:
         print(f"Could not connect to DB {table}")
         raise ConnectionError
     cursor = connection.cursor()
-    cursor.execute(f"SELECT * FROM {table}")
-    headers = list(cursor.column_names)
-    df = pl.DataFrame(cursor.fetchall(), orient="row")
-    df.columns = headers
-    return df
+    table = pl.read_database(f"SELECT * FROM {table}", cursor)
+    return table
 
 
 def extract_db_polars(table:str, path: str|None = cred_path()) -> pl.DataFrame:
