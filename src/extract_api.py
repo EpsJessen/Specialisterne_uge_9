@@ -5,7 +5,7 @@
 import requests
 import polars as pl
 import json
-from get_path import credentials_path as cred_path
+from get_path import online_creds_path as cred_path
 
 
 def api_get(ip: str, port: int, dataset: str) -> pl.DataFrame:
@@ -23,7 +23,7 @@ def api_get(ip: str, port: int, dataset: str) -> pl.DataFrame:
         ConnectionError: If the connection does not result
         in a 200 status code
     """
-    
+
     try:
         connection = f"http://{ip}:{port}/{dataset}"
         response = requests.get(connection, timeout=1)
@@ -38,7 +38,7 @@ def api_get(ip: str, port: int, dataset: str) -> pl.DataFrame:
         raise ConnectionError
 
 
-def extract_api(table: str, path: str|None = cred_path()) -> pl.DataFrame:
+def extract_api(table: str, path: str | None = cred_path()) -> pl.DataFrame:
     """Gets credentials and uses them to extract dataset from API
 
     Args:
