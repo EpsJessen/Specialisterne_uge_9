@@ -22,38 +22,48 @@ class DBFromPl:
             credentials_file=credentials_file, dbname=schema, exists=False
         )
 
+    def pks_string(self, pks: list[str] = ["ID"]) -> str:
+        # Generates the SQL for adding primary key constraint to table
+        pk_string = "PRIMARY KEY ("
+        for pk in pks:
+            pk_string += f"`{pk}`, "
+        return pk_string[0:-2] + ")"
+
+    def fks_string(self, fks: list[dict[str, str | list[str]]]) -> str:
+        # Generates the SQL for adding foreign key constraint to table
+        fk_str = ""
+        for fk in fks:
+            fk_str += f", FOREIGN KEY (`{fk["fk"]}`) "
+            fk_str += f"REFERENCES `{fk["table"]}`("
+            for key in fk["key"]:
+                fk_str += f"`{key}`, "
+            fk_str = fk_str[0:-2] + ")"
+            # if row in foreign table is deleted, corresponding
+            # rows in current table is too
+            fk_str += " ON DELETE CASCADE"
+            # if row in foreign table is updated, corresponding
+            # rows in current table is too
+            fk_str += " ON UPDATE CASCADE"
+        return fk_str
+
     # Adds table to schema
     def add_table(
         self,
         table_name: str,
         headers: list[str],
         datatypes: list[pl.DataType],
-        fk_dicts=None,
+        fk_dicts: None | list[dict[str, str | list[str]]] = None,
         pks: list[str] = ["ID"],
     ) -> None:
         fields = ""
         # Adds each field one by one to query
         for i, name in enumerate(headers):
             fields += f"`{name}` {self.pldt_to_sql_type(datatypes[i])},"
-        # Adds primary key
-        fields += "PRIMARY KEY ("
-        for pk in pks:
-            fields += f"`{pk}`, "
-        fields = fields[0:-2] + ")"
+        # Adds primary keys
+        fields += self.pks_string(pks)
+        # Adds foreign keys if any
         if fk_dicts != None:
-            for fk in fk_dicts:
-                fields += f", FOREIGN KEY (`{fk["fk"]}`) "
-                fields += f"REFERENCES `{fk["table"]}` ("
-                for key in fk["key"]:
-                    fields += f"`{key}`, "
-                fields = fields[0:-2] + ")"
-                # if row in foreign table is deleted, corresponding
-                # rows in current table is too
-                fields += " ON DELETE CASCADE"
-                # if row in foreign table is updated, corresponding
-                # rows in current table is too
-                fields += " ON UPDATE CASCADE"
-
+            fields += self.fks_string(fk_dicts)
         # Creates full query
         create_table_stmnt = f"CREATE TABLE {table_name}({fields});"
         # Drops table if it already exists in the schema, and then adds
