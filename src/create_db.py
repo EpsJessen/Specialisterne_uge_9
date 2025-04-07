@@ -87,7 +87,7 @@ class DBFromPl:
                 return "VARCHAR(250)"
 
 
-def create_db(order: list[str], pks:dict[str,list[str]], fks:dict[None|list[dict]]):
+def create_db(tables: list[pl.DataFrame], order: list[str], pks:dict[str,list[str]], fks:dict[None|list[dict]]):
     creds = join("Data", "my_db.json")
     db = DBFromPl(credentials_file=creds, schema="bikes")
     # db.make_populated_table("Orders_combined", "orders_combined.csv")
@@ -110,17 +110,19 @@ def create_db(order: list[str], pks:dict[str,list[str]], fks:dict[None|list[dict
     #        ],
     #    ],
     # )
-    tables = transform_data.main()
     for name in order:
         df = tables[name]
         db.add_table(name, df.columns, df.dtypes, pks=pks[name], fk_dicts=fks[name])
 
-
-def main():
+def create_my_db(tables: list[pl.DataFrame]) -> None:
     order = table_order_and_keys.get_order()
     pks = table_order_and_keys.get_pks()
     fks = table_order_and_keys.get_fks()
-    create_db(order,pks,fks)
+    create_db(tables, order,pks,fks)
+
+def main():
+    tables = transform_data.main()
+    create_my_db(tables)
 
 if __name__ == "__main__":
     main()
