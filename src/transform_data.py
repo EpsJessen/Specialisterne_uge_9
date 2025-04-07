@@ -102,7 +102,7 @@ def main():
     t_dict = transform_all(table_dict)
 
     # INSPECT
-    print(t_dict["brands"].head(10))
+    #print(t_dict["brands"].head(10))
     return t_dict
 
 
