@@ -16,16 +16,15 @@ def load_table(data: pl.DataFrame, name: str, credentials) -> None:
     data.write_database(table_name=name, connection=uri, if_table_exists="append")
 
 
-def populate_tables(order: list[str]):
+def populate_tables(order: list[str], tables: dict[str, pl.DataFrame]):
     creds = join("Data", "my_db.json")
-    tables = transform_data.main()
-
     for name in order:
         load_table(tables[name], name, creds)
 
 def main():
     order = get_order()
-    populate_tables(order)
+    tables = transform_data.main()
+    populate_tables(order, tables)
 
 if __name__ == "__main__":
     main()
