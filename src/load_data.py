@@ -20,10 +20,12 @@ def populate_tables(order: list[str], tables: dict[str, pl.DataFrame]):
     for name in order:
         load_table(tables[name], name, creds)
 
+
 def main():
     order = get_order()
     tables = transform_data.main()
     populate_tables(order, tables)
+
 
 if __name__ == "__main__":
     main()
