@@ -1,6 +1,6 @@
 import polars as pl
 from extract_api import extract_api
-from extract_db import extract_db
+from extract_db import extract_db_polars
 from extract_csv import extract_csv
 from enum import Enum
 from os.path import join
@@ -34,7 +34,7 @@ def extract(table:str, type: TableTypes = TableTypes.NOT_SET, **kwargs) -> pl.Da
         return extract_api(table, path=kwargs.get("credentials", None))
 
     elif type == TableTypes.DB or (table in ["brands", "categories", "products", "stocks"] and type == TableTypes.NOT_SET):
-        return extract_db(table, path=kwargs.get("credentials", None))
+        return extract_db_polars(table, path=kwargs.get("credentials", None))
     
     else:
         raise ValueError
