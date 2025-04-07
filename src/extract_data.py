@@ -51,6 +51,10 @@ def extract(
 
 
 def extract_fallback(table: str):
+    """
+    Extract table, preferably at correct location, 
+    but otherwise from local file
+    """
     if table in ["staffs", "stores"]:
         return extract(table)
     elif table in ["customers", "order_items", "orders"]:
@@ -65,6 +69,9 @@ def extract_fallback(table: str):
         except:
             print(f"Filling in local version of {table}")
             return extract(table, TableTypes.CSV, location=get_path.db_path(table))
+    else:
+        print("Table not recognized")
+        raise ValueError
 
 
 def main():

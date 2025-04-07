@@ -9,6 +9,13 @@ from table_order_and_keys import get_order
 
 
 def load_table(data: pl.DataFrame, name: str, credentials) -> None:
+    """Loads a table in db with values from polars dataframe
+
+    Args:
+        data (pl.DataFrame): The dataframe with the data matching a table in db
+        name (str): The name of the target table
+        credentials (_type_): Path to json file containing credentials for using db
+    """
     with open(credentials) as json_credentials:
         creds: dict = json.load(json_credentials)
     uri = f"mysql://{creds["user"]}:{creds["passwd"]}@localhost:3306/bikes"
@@ -16,6 +23,12 @@ def load_table(data: pl.DataFrame, name: str, credentials) -> None:
 
 
 def load_tables(order: list[str], tables: dict[str, pl.DataFrame]):
+    """Sequentially adds data to tables in db
+
+    Args:
+        order (list[str]): The order the tables should be loaded
+        tables (dict[str, pl.DataFrame]): The dataframes containing the data by name
+    """
     creds = my_creds_path()
     for name in order:
         load_table(tables[name], name, creds)
