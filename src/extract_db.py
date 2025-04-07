@@ -54,11 +54,26 @@ def extract_db(table: str, path: str|None = cred_path()) -> pl.DataFrame:
     return df
 
 
+def extract_db_polars(table:str, path: str|None = cred_path()) -> pl.DataFrame:
+    if path == None:
+        path = cred_path()
+    with open(path) as json_credentials:
+        creds: dict = json.load(json_credentials)
+    uri = f"mysql://{creds["SQL"]["USER"]}:{creds["SQL"]["PW"]}@{creds["IP"]}:{creds["SQL"]["PORT"]}/ProductDB"
+    query = f"SELECT * FROM {table}"
+    return pl.read_database_uri(query=query, uri=uri, engine="connectorx")
+
 def main():
     credentials_path = cred_path()
 
-    res = extract_db("PRODUCTS")
+    res = extract_db_polars("PRODUCTS")
     print(res.head(10))
+    res = extract_db_polars("STOCKS")
+    print(res.head(5))
+    res = extract_db_polars("CATEGORIES")
+    print(res.head(5))
+    res = extract_db_polars("BRANDS")
+    print(res.head(5))
 
 
 if __name__ == "__main__":
