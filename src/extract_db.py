@@ -8,7 +8,6 @@ import mysql.connector
 import mysql.connector.cursor
 import polars as pl
 
-
 def db_connection(
     credentials_path,
 ) -> mysql.connector.pooling.PooledMySQLConnection | mysql.connector.MySQLConnection:
@@ -22,13 +21,17 @@ def db_connection(
     """
     with open(credentials_path) as json_credentials:
         credentials: dict = json.load(json_credentials)
-    connection = mysql.connector.connect(
-        host=credentials["IP"],
-        port=credentials["SQL"]["PORT"],
-        user=credentials["SQL"]["USER"],
-        passwd=credentials["SQL"]["PW"],
-        database="ProductDB",
-    )
+    try:
+        connection = mysql.connector.connect(
+            host=credentials["IP"],
+            port=credentials["SQL"]["PORT"],
+            user=credentials["SQL"]["USER"],
+            passwd=credentials["SQL"]["PW"],
+            database="ProductDB",
+            connection_timeout = 10
+        )
+    except:
+        raise ConnectionError
     return connection
 
 
