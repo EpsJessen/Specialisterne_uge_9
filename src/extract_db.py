@@ -48,7 +48,11 @@ def extract_db(table: str, path: str|None = cred_path()) -> pl.DataFrame:
     if path == None:
         path = cred_path()
 
-    connection = db_connection(path)
+    try:
+        connection = db_connection(path)
+    except:
+        print(f"Could not connect to DB {table}")
+        raise ConnectionError
     cursor = connection.cursor()
     cursor.execute(f"SELECT * FROM {table}")
     headers = list(cursor.column_names)
