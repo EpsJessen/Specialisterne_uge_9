@@ -24,9 +24,12 @@ def api_get(ip: str, port: int, dataset: str) -> pl.DataFrame:
         in a 200 status code
     """
     
-    connection = f"http://{ip}:{port}/{dataset}"
-    response = requests.get(connection)
-
+    try:
+        connection = f"http://{ip}:{port}/{dataset}"
+        response = requests.get(connection, timeout=1)
+    except:
+        print(f"Connection for {dataset=} timed out!")
+        raise requests.exceptions.Timeout
     if response.status_code == 200:
         # print("Success:", response.status_code)
         return pl.DataFrame(json.loads(response.json()))
