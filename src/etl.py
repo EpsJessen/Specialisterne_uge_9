@@ -27,7 +27,7 @@ def main():
         print("COULD NOT CREATE DATABASE, ABORTING PROGRAM!")
         raise RuntimeError
     try:
-        load_data.populate_tables(order, tables)
+        load_data.load_tables(order, tables)
     except:
         print("COULD NOT POPULATE DATABASE, ABORTING PROGRAM!")
         raise RuntimeError
