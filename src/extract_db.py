@@ -74,15 +74,17 @@ def extract_db_polars(table:str, path: str|None = cred_path()) -> pl.DataFrame:
 
 def main():
     credentials_path = cred_path()
-
-    res = extract_db_polars("PRODUCTS")
-    print(res.head(10))
-    res = extract_db_polars("STOCKS")
-    print(res.head(5))
-    res = extract_db_polars("CATEGORIES")
-    print(res.head(5))
-    res = extract_db_polars("BRANDS")
-    print(res.head(5))
+    try:
+        res = extract_db("PRODUCTS")
+        print(res.head(10))
+        res = extract_db("STOCKS")
+        print(res.head(5))
+        res = extract_db("CATEGORIES")
+        print(res.head(5))
+        res = extract_db("BRANDS")
+        print(res.head(5))
+    except:
+        print("Could not extract data")
 
 
 if __name__ == "__main__":
