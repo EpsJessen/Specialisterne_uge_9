@@ -5,8 +5,8 @@
 from get_path import online_creds_path as cred_path
 import json
 import mysql.connector
-import mysql.connector.cursor
 import polars as pl
+
 
 def db_connection(
     credentials_path,
@@ -28,14 +28,14 @@ def db_connection(
             user=credentials["SQL"]["USER"],
             passwd=credentials["SQL"]["PW"],
             database="ProductDB",
-            connection_timeout = 10
+            connection_timeout=10,
         )
     except:
         raise ConnectionError
     return connection
 
 
-def extract_db(table: str, path: str|None = cred_path()) -> pl.DataFrame:
+def extract_db(table: str, path: str | None = cred_path()) -> pl.DataFrame:
     """Returns DataFrame of table from database
 
     Args:
@@ -58,7 +58,7 @@ def extract_db(table: str, path: str|None = cred_path()) -> pl.DataFrame:
     return table
 
 
-def extract_db_polars(table:str, path: str|None = cred_path()) -> pl.DataFrame:
+def extract_db_polars(table: str, path: str | None = cred_path()) -> pl.DataFrame:
     if path == None:
         path = cred_path()
     with open(path) as json_credentials:
@@ -72,8 +72,8 @@ def extract_db_polars(table:str, path: str|None = cred_path()) -> pl.DataFrame:
         print("Could not connect to db")
         raise ConnectionError
 
+
 def main():
-    credentials_path = cred_path()
     try:
         res = extract_db("PRODUCTS")
         print(res.head(10))
