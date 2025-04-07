@@ -9,7 +9,7 @@ import polars as pl
 from os.path import join
 
 
-def extract_csv(table: str, path: str|None = None) -> pl.DataFrame:
+def extract_csv(table: str, path: str | None = None) -> pl.DataFrame:
     """Extracts data from csv file returning extracted data as a polars DataFrame
 
     Args:
@@ -37,7 +37,6 @@ def main():
         print(staffs.head())
     except FileNotFoundError:
         print(f"Could not find {path}")
-    
 
 
 if __name__ == "__main__":
