@@ -5,7 +5,6 @@
 
 from get_path import csv_path
 import polars as pl
-from os.path import join
 
 
 def extract_csv(table: str, path: str | None = None) -> pl.DataFrame:
