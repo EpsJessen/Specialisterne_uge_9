@@ -10,6 +10,7 @@ import load_data
 import create_db
 import table_order_and_keys
 
+
 def main():
     order = table_order_and_keys.get_order()
     tables = {}
@@ -30,6 +31,7 @@ def main():
     except:
         print("COULD NOT POPULATE DATABASE, ABORTING PROGRAM!")
         raise RuntimeError
+
 
 if __name__ == "__main__":
     main()
