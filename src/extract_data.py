@@ -1,9 +1,11 @@
 import polars as pl
 from extract_api import extract_api
-from extract_db import extract_db_polars
+from extract_db import extract_db
 from extract_csv import extract_csv
 from enum import Enum
 from os.path import join
+from requests.exceptions import Timeout
+import get_path
 
 class TableTypes(Enum):
     CSV = 1
