@@ -73,6 +73,8 @@ class DBFromPl:
 
     # Determine which sql type corresponds to data
     def pldt_to_sql_type(self, pldt: pl.DataType) -> str:
+        # Returns a string representation of a datatype matching a
+        # polars datatype
         match pldt:
             case (
                 pl.UInt8
@@ -104,6 +106,8 @@ def create_db(
     pks: dict[str, list[str]],
     fks: dict[None | list[dict]],
 ) -> None:
+    # Create a schema from polars dataframes and data on table ordering and
+    # primary / foreign keys
     creds = my_creds_path()
     db = DBFromPl(credentials_file=creds, schema="bikes")
     for name in order:
@@ -112,6 +116,7 @@ def create_db(
 
 
 def create_my_db(tables: list[pl.DataFrame]) -> None:
+    # Create database specific to task
     order = table_order_and_keys.get_order()
     pks = table_order_and_keys.get_pks()
     fks = table_order_and_keys.get_fks()
