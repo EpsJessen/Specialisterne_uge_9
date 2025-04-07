@@ -21,7 +21,7 @@ class Connector:
     dbname: str
 
     def __init__(self, credentials_file, dbname: str = "orders", exists: bool = True):
-        
+
         with open(credentials_file) as json_credentials:
             credentials: dict = json.load(json_credentials)
         self.host = credentials.get("host")
