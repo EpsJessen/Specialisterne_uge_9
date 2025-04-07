@@ -3,9 +3,8 @@ from extract_api import extract_api
 from extract_db import extract_db
 from extract_csv import extract_csv
 from enum import Enum
-from os.path import join
-from requests.exceptions import Timeout
 import get_path
+
 
 class TableTypes(Enum):
     CSV = 1
@@ -14,7 +13,9 @@ class TableTypes(Enum):
     NOT_SET = 4
 
 
-def extract(table:str, type: TableTypes = TableTypes.NOT_SET, **kwargs) -> pl.DataFrame:
+def extract(
+    table: str, type: TableTypes = TableTypes.NOT_SET, **kwargs
+) -> pl.DataFrame:
     """Extracts table from either csv, db or api in the for of a dataframe
 
     Args:
@@ -29,19 +30,27 @@ def extract(table:str, type: TableTypes = TableTypes.NOT_SET, **kwargs) -> pl.Da
     Returns:
         pl.DataFrame: The extracted table
     """
-    if type == TableTypes.CSV or (table in ["staffs", "stores"] and type == TableTypes.NOT_SET):
+    if type == TableTypes.CSV or (
+        table in ["staffs", "stores"] and type == TableTypes.NOT_SET
+    ):
         return extract_csv(table, path=kwargs.get("location", None))
 
-    elif type == TableTypes.API or (table in ["customers", "order_items", "orders"] and type == TableTypes.NOT_SET):
+    elif type == TableTypes.API or (
+        table in ["customers", "order_items", "orders"] and type == TableTypes.NOT_SET
+    ):
         return extract_api(table, path=kwargs.get("credentials", None))
 
-    elif type == TableTypes.DB or (table in ["brands", "categories", "products", "stocks"] and type == TableTypes.NOT_SET):
+    elif type == TableTypes.DB or (
+        table in ["brands", "categories", "products", "stocks"]
+        and type == TableTypes.NOT_SET
+    ):
         return extract_db(table, path=kwargs.get("credentials", None))
-    
+
     else:
         raise ValueError
 
-def extract_fallback(table:str):
+
+def extract_fallback(table: str):
     if table in ["staffs", "stores"]:
         return extract(table)
 
@@ -50,13 +59,14 @@ def extract_fallback(table:str):
             return extract(table)
         except:
             print(f"Filling in local version of {table}")
-            return extract(table, TableTypes.CSV, location = get_path.api_path())
+            return extract(table, TableTypes.CSV, location=get_path.api_path())
     elif table in ["brands", "categories", "products", "stocks"]:
         try:
             return extract(table)
         except:
             print(f"Filling in local version of {table}")
-            return extract(table, TableTypes.CSV, location = get_path.db_path())
+            return extract(table, TableTypes.CSV, location=get_path.db_path())
+
 
 def main():
     staff_df = extract("staffs")
@@ -68,4 +78,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
