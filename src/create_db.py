@@ -4,9 +4,7 @@
 #
 
 from communicate_db import Connector
-from os.path import join
-import csv
-from datetime import datetime
+from get_path import my_creds_path
 import polars as pl
 import transform_data
 import table_order_and_keys
@@ -90,42 +88,30 @@ class DBFromPl:
                 return "VARCHAR(250)"
 
 
-def create_db(tables: list[pl.DataFrame], order: list[str], pks:dict[str,list[str]], fks:dict[None|list[dict]]):
-    creds = join("Data", "my_db.json")
+def create_db(
+    tables: list[pl.DataFrame],
+    order: list[str],
+    pks: dict[str, list[str]],
+    fks: dict[None | list[dict]],
+) -> None:
+    creds = my_creds_path()
     db = DBFromPl(credentials_file=creds, schema="bikes")
-    # db.make_populated_table("Orders_combined", "orders_combined.csv")
-    # os_path = join("data", "orders_combined.csv")
-    # with open(os_path, "r") as csv_file:
-    #    csv_reader = csv.reader(csv_file)
-    #    _ = next(csv_reader)
-    #    vals = next(csv_reader)
-    #    for val in vals:
-    #        print(f"{val} is of sql_type {db.item_to_sql_type(val)}")
-    # db.make_populated_tables(
-    #    ["customers", "products", "orders"],
-    #    ["customers.csv", "products.csv", "orders.csv"],
-    #    [
-    #        None,
-    #        None,
-    #        [
-    #            {"table": "customers", "key": "id", "fk": "customer"},
-    #            {"table": "products", "key": "id", "fk": "product"},
-    #        ],
-    #    ],
-    # )
     for name in order:
         df = tables[name]
         db.add_table(name, df.columns, df.dtypes, pks=pks[name], fk_dicts=fks[name])
+
 
 def create_my_db(tables: list[pl.DataFrame]) -> None:
     order = table_order_and_keys.get_order()
     pks = table_order_and_keys.get_pks()
     fks = table_order_and_keys.get_fks()
-    create_db(tables, order,pks,fks)
+    create_db(tables, order, pks, fks)
+
 
 def main():
     tables = transform_data.main()
     create_my_db(tables)
+
 
 if __name__ == "__main__":
     main()
