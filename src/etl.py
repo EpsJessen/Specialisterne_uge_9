@@ -13,11 +13,23 @@ import table_order_and_keys
 def main():
     order = table_order_and_keys.get_order()
     tables = {}
-    for table in order:
-        tables[table] = extract_data.extract(table)
+    try:
+        for table in order:
+            tables[table] = extract_data.extract_fallback(table)
+    except:
+        print("COULD NOT GATHER TABLE DATA, ABORTING PROGRAM!")
+        raise RuntimeError
     tables = transform_data.transform_all(tables)
-    create_db.create_my_db(tables)
-    load_data.populate_tables(order, tables)
+    try:
+        create_db.create_my_db(tables)
+    except:
+        print("COULD NOT CREATE DATABASE, ABORTING PROGRAM!")
+        raise RuntimeError
+    try:
+        load_data.populate_tables(order, tables)
+    except:
+        print("COULD NOT POPULATE DATABASE, ABORTING PROGRAM!")
+        raise RuntimeError
 
 if __name__ == "__main__":
     main()
