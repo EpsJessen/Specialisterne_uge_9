@@ -41,6 +41,22 @@ def extract(table:str, type: TableTypes = TableTypes.NOT_SET, **kwargs) -> pl.Da
     else:
         raise ValueError
 
+def extract_fallback(table:str):
+    if table in ["staffs", "stores"]:
+        return extract(table)
+
+    elif table in ["customers", "order_items", "orders"]:
+        try:
+            return extract(table)
+        except:
+            print(f"Filling in local version of {table}")
+            return extract(table, TableTypes.CSV, location = get_path.api_path())
+    elif table in ["brands", "categories", "products", "stocks"]:
+        try:
+            return extract(table)
+        except:
+            print(f"Filling in local version of {table}")
+            return extract(table, TableTypes.CSV, location = get_path.db_path())
 
 def main():
     staff_df = extract("staffs")
