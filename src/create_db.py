@@ -44,8 +44,11 @@ class DBFromPl:
         fields = fields[0:-2] + ")"
         if fk_dicts != None:
             for fk in fk_dicts:
-                fields += f""", FOREIGN KEY (`{fk["fk"]}`) 
-                            REFERENCES `{fk["table"]}`(`{fk["key"]}`)"""
+                fields += f", FOREIGN KEY (`{fk["fk"]}`) "
+                fields += f"REFERENCES `{fk["table"]}` ("
+                for key in fk["key"]:
+                    fields += f"`{key}`, "
+                fields = fields[0:-2] + ")"
                 # if row in foreign table is deleted, corresponding
                 # rows in current table is too
                 fields += " ON DELETE CASCADE"
