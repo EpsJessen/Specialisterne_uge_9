@@ -4,7 +4,6 @@
 #
 
 from get_path import csv_path
-from csv import reader
 import polars as pl
 from os.path import join
 
