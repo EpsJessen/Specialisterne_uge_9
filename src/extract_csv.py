@@ -24,8 +24,6 @@ def extract_csv(table: str, path: str | None = None) -> pl.DataFrame:
     """
     if path is None:
         path = csv_path(f"{table}")
-    else:
-        path = join(path, f"{table}.csv")
     return pl.read_csv(path)
 
 

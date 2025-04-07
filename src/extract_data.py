@@ -59,13 +59,13 @@ def extract_fallback(table: str):
             return extract(table)
         except:
             print(f"Filling in local version of {table}")
-            return extract(table, TableTypes.CSV, location=get_path.api_path())
+            return extract(table, TableTypes.CSV, location=get_path.api_path(table))
     elif table in ["brands", "categories", "products", "stocks"]:
         try:
             return extract(table)
         except:
             print(f"Filling in local version of {table}")
-            return extract(table, TableTypes.CSV, location=get_path.db_path())
+            return extract(table, TableTypes.CSV, location=get_path.db_path(table))
 
 
 def main():

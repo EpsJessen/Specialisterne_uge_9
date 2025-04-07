@@ -4,7 +4,7 @@
 #
 
 import mysql.connector
-from os.path import join
+from get_path import my_creds_path
 import json
 
 
@@ -100,7 +100,7 @@ class Connector:
 
 
 def main():
-    creds = join("Data", "my_db.json")
+    creds = my_creds_path()
     orders_connector = Connector(credentials_file=creds, dbname="bikes", exists=False)
 
 
