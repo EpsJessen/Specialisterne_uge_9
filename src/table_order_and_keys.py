@@ -1,4 +1,7 @@
 def get_order():
+    # Give the tables in an order such that all tables a given table 
+    # depends on is placed before that table - can be done since we have 
+    # no circular dependencies 
     return [
         "customers",
         "brands",
@@ -13,6 +16,7 @@ def get_order():
 
 
 def get_pks():
+    # Dictionary of primary keys of tables
     return {
         "customers": ["customer_id"],
         "brands": ["brand_id"],
@@ -27,6 +31,8 @@ def get_pks():
 
 
 def get_fks():
+    # Dictionary of foreign keys of tables, as well as the tables where 
+    # the keys are found
     pks = get_pks()
     return {
         "customers": None,
