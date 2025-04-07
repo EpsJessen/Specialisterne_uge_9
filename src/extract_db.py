@@ -2,7 +2,7 @@
 # This module will extract data from database given
 #  credentials
 #
-from get_path import credentials_path as cred_path
+from get_path import online_creds_path as cred_path
 import json
 import mysql.connector
 import mysql.connector.cursor
