@@ -95,6 +95,10 @@ def split_prepended(
     table = remove_column(table, column)
     return table.unnest("splits")
 
+def remove_surrounding(table: pl.DataFrame, column: str) -> pl.DataFrame:
+    "Removes surrounding whitespace from column"
+    return table.select(pl.col(column).str.strip())
+
 
 
 def main():
