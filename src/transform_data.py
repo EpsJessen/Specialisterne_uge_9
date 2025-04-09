@@ -10,6 +10,7 @@ from table_order_and_keys import get_order
 def transform_customers(customers: pl.DataFrame) -> pl.DataFrame:
     """Performs transformation on customers"""
     # No transformations at this time
+    customers = tt.split_prepended(customers, "street", "street_nr")
     return customers
 
 
@@ -137,7 +138,7 @@ def main():
     t_dict = transform_all(table_dict)
 
     # INSPECT
-    #print(t_dict["order_items"].head(10))
+    #print(t_dict["customers"].head(10))
     return t_dict
 
 
