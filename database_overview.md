@@ -112,3 +112,10 @@ Added ID to staff, store
 Removed duplicate data list_price
 
 ![ER Goal](Data/ER_goal.png "ER goal")
+
+
+### Flow of ETL process
+
+![ETL Process](Data/ETL-flow.png "ER Flow")
+
+
