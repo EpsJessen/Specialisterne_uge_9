@@ -7,10 +7,11 @@
 |CUSTOMERS|type |notes
 |---------|-| - |
 |customer_ID*| INT |
-|first_name|STR | NOT NULL|
-|last_name|STR|NOT NULL|
-|phone| STR| can be null|
-|email| STR| check that it conforms, (personal, if phone null this should not be)|
+|first_name|STR | 
+|last_name|STR|
+|phone| STR|
+|email| STR| check that it conforms (-)|
+|street_nr| STR | must be a string as some addresses are like '25C'|
 |street| STR | fmt: nr, names; remove surrounding whitespace|
 |city| STR | NOT NULL? |
 |state| STR | NOT NULL|
