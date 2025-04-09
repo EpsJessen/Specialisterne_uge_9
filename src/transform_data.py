@@ -49,6 +49,8 @@ def transform_staffs(staffs: pl.DataFrame, stores: pl.DataFrame) -> pl.DataFrame
     staffs = tt.change_data_type(staffs, "manager_id", pl.UInt32)
     # Change name of column name to first_name, as this is what is represented
     staffs = tt.change_column_name(staffs, "name", "first_name")
+    # Change active to be of type boolean
+    staffs = tt.change_data_type(staffs, "active", pl.Boolean)
     return staffs
 
 
