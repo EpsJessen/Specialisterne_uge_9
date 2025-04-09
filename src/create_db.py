@@ -110,6 +110,8 @@ class DBFromPl:
         """
         #
         match pldt:
+            case pl.Boolean:
+                return "BOOLEAN"
             case (
                 pl.UInt8
                 | pl.UInt16
