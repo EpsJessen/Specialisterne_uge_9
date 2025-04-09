@@ -92,10 +92,7 @@ def split_prepended(
         .struct.rename_fields([nr_column_name, rest_column_name])
         .alias("splits")
     )
-
-    if rest_column_name == column:
-        table = remove_column(table, column)
-    
+    table = remove_column(table, column)
     return table.unnest("splits")
 
 
