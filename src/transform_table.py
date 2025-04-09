@@ -76,6 +76,30 @@ def change_column_name(
     return table.rename({old_name: new_name})
 
 
+def split_prepended(
+        table: pl.DataFrame,
+        column: str,
+        nr_column_name: str,
+        **kwargs: str
+) -> pl.DataFrame:
+    "Move prepended substring from string to separate column"
+    if kwargs.get("rest_column_name") is None:
+        rest_column_name = column
+    
+    table = table.with_columns(
+        pl.col(column)
+        .str.splitn(" ", 2)
+        .struct.rename_fields([nr_column_name, rest_column_name])
+        .alias("splits")
+    )
+
+    if rest_column_name == column:
+        table = remove_column(table, column)
+    
+    return table.unnest("splits")
+
+
+
 def main():
     pass
 
