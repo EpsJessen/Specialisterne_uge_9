@@ -9,7 +9,9 @@ from table_order_and_keys import get_order
 
 def transform_customers(customers: pl.DataFrame) -> pl.DataFrame:
     """Performs transformation on customers"""
-    # No transformations at this time
+    # Remove surrounding whitespace
+    customers = tt.remove_surrounding(customers, "street")
+    # Splits street into street_nr and street
     customers = tt.split_prepended(customers, "street", "street_nr")
     return customers
 
