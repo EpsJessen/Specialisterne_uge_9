@@ -44,7 +44,7 @@
 |last_name| STR |
 |email*| STR | work-email can be pk, ensure fmt|
 |phone| STR | NOT NULL?, work-nr? |
-|active| INT | active in [0,1] NOT NULL |
+|active| BOOL (TINYINT(1)) | NOT NULL |
 |store_name *fk (STORES)*| STR | NOT NULL |
 |street| STR | should be removed as it is data duplication with STORES|
 |manager| INT | Can be null, probably refers to STAFFS, although numbers are a bit weird|
