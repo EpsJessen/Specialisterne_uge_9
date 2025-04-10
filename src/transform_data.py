@@ -22,8 +22,7 @@ def transform_order_items(
     """Performs transformation on order_items using related tables"""
     # List_price is duplicated from products
     order_items = tt.remove_column(order_items, "list_price")
-    # Better naming for ids
-    order_items = tt.change_column_name(order_items, "order_id", "order")
+    # Better naming for item element of pk
     order_items = tt.change_column_name(order_items, "item_id", "item_nr")
     return order_items
 
@@ -33,17 +32,17 @@ def transform_orders(
 ) -> pl.DataFrame:
     """Performs transformation on orders using related tables"""
     # Refer to related tables by id
-    orders = tt.change_to_foreign_ID(orders, staffs, "staff_name", "staff", "first_name")
-    orders = tt.change_to_foreign_ID(orders, stores, "store", "store", "name")
+    orders = tt.change_to_foreign_ID(orders, staffs, "staff_name", "staff_id", "first_name", "staff_id")
+    orders = tt.change_to_foreign_ID(orders, stores, "store", "store_id", "name", "store_id")
     return orders
 
 
 def transform_staffs(staffs: pl.DataFrame, stores: pl.DataFrame) -> pl.DataFrame:
     """Performs transformation on order_staffs using related table store"""
     # Add id column
-    staffs = tt.add_ID(staffs)
+    staffs = tt.add_ID(staffs, "staff_id")
     # Refer to store by id
-    staffs = tt.change_to_foreign_ID(staffs, stores, "store_name", "store", "name", "id")
+    staffs = tt.change_to_foreign_ID(staffs, stores, "store_name", "store_id", "name", "store_id")
     # Street is duplicated from stores
     staffs = tt.remove_column(staffs, "street")
     # The manager of employees 9, 10 is 8 not 7
@@ -60,7 +59,7 @@ def transform_staffs(staffs: pl.DataFrame, stores: pl.DataFrame) -> pl.DataFrame
 def transform_stores(stores: pl.DataFrame) -> pl.DataFrame:
     """Performs transformation on stores"""
     # Add id column
-    stores = tt.add_ID(stores)
+    stores = tt.add_ID(stores, "store_id")
     return stores
 
 
@@ -90,9 +89,7 @@ def transform_stocks(
 ) -> pl.DataFrame:
     """Performs transformation on stocks using related tables"""
     # Use id from stores
-    stocks = tt.change_to_foreign_ID(stocks, stores, "store_name", "store", "name")
-    # Change to better name for product column
-    stocks = tt.change_column_name(stocks, "product_id", "product")
+    stocks = tt.change_to_foreign_ID(stocks, stores, "store_name", "store_id", "name", "store_id")
     return stocks
 
 
