@@ -1,9 +1,9 @@
 import polars as pl
 
 
-def add_ID(table: pl.DataFrame) -> pl.DataFrame:
+def add_ID(table: pl.DataFrame, name: str = "id") -> pl.DataFrame:
     """Adds column with ids starting at 1"""
-    return table.with_row_index("id", offset=1)
+    return table.with_row_index(name, offset=1)
 
 
 def remove_column(table: pl.DataFrame, row: str) -> pl.DataFrame:
