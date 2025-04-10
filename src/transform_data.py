@@ -60,6 +60,10 @@ def transform_stores(stores: pl.DataFrame) -> pl.DataFrame:
     """Performs transformation on stores"""
     # Add id column
     stores = tt.add_ID(stores, "store_id")
+    # Remove surrounding whitespace from street
+    stores = tt.remove_surrounding(stores, "street")
+    # Splits street into street_nr and street
+    stores = tt.split_prepended(stores, "street", "street_nr")
     return stores
 
 
