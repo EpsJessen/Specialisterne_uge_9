@@ -4,6 +4,9 @@
 
 ### API
 
+(-) => Not done  
+All values are allowed to be null, should probably not be the case
+
 |CUSTOMERS|type |notes
 |---------|-| - |
 |customer_ID*| INT |
@@ -12,10 +15,10 @@
 |phone| STR|
 |email| STR| check that it conforms (-)|
 |street_nr| STR | must be a string as some addresses are like '25C'|
-|street| STR | fmt: nr, names; remove surrounding whitespace|
-|city| STR | NOT NULL? |
-|state| STR | NOT NULL|
-|zip_code| INT | NOT NULL?|
+|street| STR | remove surrounding whitespace|
+|city| STR | |
+|state| STR | |
+|zip_code| INT | |
 
 | ORDER_ITEMS| type | note |
 |-|-|-|
@@ -23,68 +26,70 @@
 |item_id*| INT |
 |product_id *fk (PRODUCTS)*| INT |
 |quantity| INT |
-|list_price| FLOAT | not negative, should be removed since it is duplication |
-|discount| FLOAT | 0 < discount < 1, suspicious if too large, needs not be equal for order|
+|list_price| FLOAT | should be removed since it is duplication |
+|discount| FLOAT | 0 < discount < 1, suspicious if too large, needs not be equal for order (-)|
 
 | ORDERS| type | note |
 |-|-|-|
 |order_id*| INT|
 |customer_id *fk (CUSTOMERS)*| INT |
-|order_status|INT | code in [1,2,3,4]?|
+|order_status|INT | code in [1,2,3,4] (-)|
 |order_date|DATE|
-|required_date|DATE|should not be before order_date |
-|shipped_date|DATE|should not be before order_date |
-|store *fk (STORES)*| STR |
-|staff_name *fk (STAFFS)*| STR | ensure it matches pk in staffs|
+|required_date|DATE|should not be before order_date (-) |
+|shipped_date|DATE|should not be before order_date (-)|
+|store *fk (STORES)*| INT | change to store_id |
+|staff_name *fk (STAFFS)*| INT | change to staff_id |
 
 ### CSV
 
 |STAFFS| type | note |
 |-|-|-|
-|name| STR | currently treated as pk |
+| ID* | INT | new primary key |
+|name| STR | currently treated as pk, should be first_name |
 |last_name| STR |
-|email*| STR | work-email can be pk, ensure fmt|
-|phone| STR | NOT NULL?, work-nr? |
-|active| BOOL (TINYINT(1)) | NOT NULL |
-|store_name *fk (STORES)*| STR | NOT NULL |
+|email| STR | ensure fmt (-) |
+|phone| STR | |
+|active| BOOL (TINYINT(1)) |  |
+|store_name *fk (STORES)*| INT| changed to store_id|
 |street| STR | should be removed as it is data duplication with STORES|
-|manager| INT | Can be null, probably refers to STAFFS, although numbers are a bit weird|
+|manager| INT | Can be null, reference to staff_id, correct id should be ensured|
 
 |STORES| type | note |
 |-|-|-|
-|name*| STR | might be a bad pk |
-|phone| STR | NOT NULL
-|email| STR | NOT NULL, ensure fmt, UNIQUE |
-|street| STR | NOT NULL, UNIQUE, fmt: nr, name|
-|city| STR | NOT NULL|
-|state| STR | NOT NULL |
-|zip_code| INT | NOT NULL |
+|id|INT|new pk|
+|name| STR | previous pk|
+|phone| STR | |
+|email| STR | ensure fmt, UNIQUE (-)|
+|street| STR | UNIQUE, fmt: nr, name (-)|
+|city| STR | |
+|state| STR |  |
+|zip_code| INT | |
 ### DB
 
 |BRANDS| type | note |
 |-|-|-|
-| brand_id* | INT | AUTOINCREMENT
-| brand_name | STR | NOT NULL, UNIQUE
+| brand_id* | INT | |
+| brand_name | STR | |
 
 |CATEGORIES| type | note |
 |-|-|-|
-| category_id* | INT | AUTOINCREMENT?|
-| category_name | STR | NOT NULL, UNIQUE |
+| category_id* | INT | kept as separate table to avoid storing string in each row of product|
+| category_name | STR | kept as separate table to avoid storing string in each row of product|
 
 |PRODUCTS| type | note |
 |-|-|-|
-| product_id* | INT | AUTOINCREMENT |
-| product_name | STR | not unique, NOT NULL |
-| brand_id *fk (BRANDS)* | INT | NOT NULL |
-| category_id *fk (CATEGORIES)* | INT | NOT NULL |
-| model_year | INT | NOT NULL (should we include range - might have models for next year, could have old - though not likely)
-| list_price | FLOAT | NOT NULL, POSITIVE |
+| product_id* | INT | |
+| product_name | STR | Not neccessarily unique since type of bike is not necessarily part of name|
+| brand_id *fk (BRANDS)* | INT | |
+| category_id *fk (CATEGORIES)* | INT | |
+| model_year | INT | |
+| list_price | FLOAT | POSITIVE (-)|
 
 |STOCKS| type | note |
 |-|-|-|
-| store_name* *fk (STORES)*| STR | NOT NULL |
-| product_id* *fk (PRODUCTS)*| INT | NOT NULL |
-| quantity | INT | NOT NEGATIVE, NOT NULL |
+| store_name* *fk (STORES)*| INT | Change to store_id |
+| product_id* *fk (PRODUCTS)*| INT | |
+| quantity | INT | NOT NEGATIVE (-) |
 
 ## CONNECTIONS
 v = from column to row  
@@ -108,7 +113,7 @@ v = from column to row
 
 ### ER Goal
 
-Better naming of columns (no id/name appended to FKs)  
+Better naming of columns (same columns, same name in different tables)  
 Added ID to staff, store  
 Removed duplicate data list_price
 
