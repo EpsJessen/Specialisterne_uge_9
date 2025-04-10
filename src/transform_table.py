@@ -97,12 +97,14 @@ def split_prepended(
 
 def remove_surrounding(table: pl.DataFrame, column: str) -> pl.DataFrame:
     "Removes surrounding whitespace from column"
-    return table.select(pl.col(column).str.strip())
+    #For some reason does not recognize str.strip() anymore?
+    return table.with_columns(pl.col(column).str.strip_chars_end().str.strip_chars_start())
 
 
 
 def main():
-    pass
+    df = pl.DataFrame({"foo": [" hello  ", "\nworld"], "bar": ["goodbye", "world "]})
+    print(remove_surrounding(df, "foo"))
 
 
 if __name__ == "__main__":
