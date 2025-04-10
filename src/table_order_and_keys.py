@@ -23,12 +23,12 @@ def get_pks() -> dict[str, list[str]]:
         "customers": ["customer_id"],
         "brands": ["brand_id"],
         "categories": ["category_id"],
-        "stores": ["id"],
+        "stores": ["store_id"],
         "products": ["product_id"],
-        "stocks": ["store", "product"],
-        "staffs": ["id"],
+        "stocks": ["store_id", "product_id"],
+        "staffs": ["staff_id"],
         "orders": ["order_id"],
-        "order_items": ["order", "item_nr"],
+        "order_items": ["order_id", "item_nr"],
     }
 
 
@@ -46,20 +46,20 @@ def get_fks() -> dict[str, list[dict[str, str | list[str]]] | None]:
             {"table": "categories", "key": pks["categories"], "fk": "category_id"},
         ],
         "stocks": [
-            {"table": "stores", "key": pks["stores"], "fk": "store"},
-            {"table": "products", "key": pks["products"], "fk": "product"},
+            {"table": "stores", "key": pks["stores"], "fk": "store_id"},
+            {"table": "products", "key": pks["products"], "fk": "product_id"},
         ],
         "staffs": [
-            {"table": "stores", "key": pks["stores"], "fk": "store"},
+            {"table": "stores", "key": pks["stores"], "fk": "store_id"},
             {"table": "staffs", "key": pks["staffs"], "fk": "manager_id"},
         ],
         "orders": [
-            {"table": "stores", "key": pks["stores"], "fk": "store"},
-            {"table": "staffs", "key": pks["staffs"], "fk": "staff"},
+            {"table": "stores", "key": pks["stores"], "fk": "store_id"},
+            {"table": "staffs", "key": pks["staffs"], "fk": "staff_id"},
             {"table": "customers", "key": pks["customers"], "fk": "customer_id"},
         ],
         "order_items": [
-            {"table": "orders", "key": pks["orders"], "fk": "order"},
+            {"table": "orders", "key": pks["orders"], "fk": "order_id"},
             {"table": "products", "key": pks["products"], "fk": "product_id"},
         ],
     }
