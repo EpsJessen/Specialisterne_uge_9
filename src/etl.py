@@ -25,7 +25,7 @@ def main():
     # EXTRACT all tables
     try:
         for table in order:
-            tables[table] = extract_data.extract_fallback(table)
+            tables[table] = extract_data.extract_with_fallback(table)
     except:
         print("COULD NOT GATHER TABLE DATA, ABORTING PROGRAM!")
         raise RuntimeError
@@ -46,6 +46,7 @@ def main():
     except:
         print("COULD NOT POPULATE DATABASE, ABORTING PROGRAM!")
         raise RuntimeError
+    print("ETL Completed!")
 
 
 if __name__ == "__main__":
