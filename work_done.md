@@ -6,7 +6,7 @@
 - Created ER diagrams
 - Decided on transformation of data
   - General:
-    - Better naming of columns (avoid id/name appended)
+    - Better naming of columns (same name when referring to same thing)
   - Add ID:
     - Staff
     - Store
