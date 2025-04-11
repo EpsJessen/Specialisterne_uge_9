@@ -23,7 +23,7 @@ All values are allowed to be null, should probably not be the case
 | ORDER_ITEMS| type | note |
 |-|-|-|
 |order_id* *fk (ORDERS)*| INT |
-|item_id*| INT |
+|item_id*| INT | change to item_nr, as it does not refer to a specific id |
 |product_id *fk (PRODUCTS)*| INT |
 |quantity| INT |
 |list_price| FLOAT | should be removed since it is duplication |
@@ -44,7 +44,7 @@ All values are allowed to be null, should probably not be the case
 
 |STAFFS| type | note |
 |-|-|-|
-| ID* | INT | new primary key |
+| staff_id* | INT | new primary key |
 |name| STR | currently treated as pk, should be first_name |
 |last_name| STR |
 |email| STR | ensure fmt (-) |
@@ -56,7 +56,7 @@ All values are allowed to be null, should probably not be the case
 
 |STORES| type | note |
 |-|-|-|
-|id|INT|new pk|
+|store_id|INT|new pk|
 |name| STR | previous pk|
 |phone| STR | |
 |email| STR | ensure fmt, UNIQUE (-)|
@@ -115,7 +115,7 @@ v = from column to row
 
 Better naming of columns (same columns, same name in different tables)  
 Added ID to staff, store  
-Removed duplicate data list_price
+Removed duplicate data
 
 ![ER Goal](Data/ER_goal.png "ER goal")
 
