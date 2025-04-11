@@ -4,8 +4,10 @@
 import polars as pl
 import extract_data
 import transform_table as tt
-from table_order_and_keys import get_order
+import table_order_and_keys as t_ord
 
+pks = t_ord.get_pks()
+fks = t_ord.get_fks()
 
 def transform_customers(customers: pl.DataFrame) -> pl.DataFrame:
     """Performs transformation on customers"""
@@ -23,7 +25,7 @@ def transform_order_items(
     # List_price is duplicated from products
     order_items = tt.remove_column(order_items, "list_price")
     # Better naming for item element of pk
-    order_items = tt.change_column_name(order_items, "item_id", "item_nr")
+    order_items = tt.change_column_name(order_items, "item_id", pks["order_items"][1])
     return order_items
 
 
@@ -32,17 +34,17 @@ def transform_orders(
 ) -> pl.DataFrame:
     """Performs transformation on orders using related tables"""
     # Refer to related tables by id
-    orders = tt.change_to_foreign_ID(orders, staffs, "staff_name", "staff_id", "first_name", "staff_id")
-    orders = tt.change_to_foreign_ID(orders, stores, "store", "store_id", "name", "store_id")
+    orders = tt.change_to_foreign_ID(orders, staffs, "staff_name", pks["staffs"][0], "first_name", pks["staffs"][0])
+    orders = tt.change_to_foreign_ID(orders, stores, "store", pks["stores"][0], "name", pks["stores"][0])
     return orders
 
 
 def transform_staffs(staffs: pl.DataFrame, stores: pl.DataFrame) -> pl.DataFrame:
     """Performs transformation on order_staffs using related table store"""
     # Add id column
-    staffs = tt.add_ID(staffs, "staff_id")
+    staffs = tt.add_ID(staffs, pks["staffs"][0])
     # Refer to store by id
-    staffs = tt.change_to_foreign_ID(staffs, stores, "store_name", "store_id", "name", "store_id")
+    staffs = tt.change_to_foreign_ID(staffs, stores, "store_name", pks["stores"][0], "name", pks["stores"][0])
     # Street is duplicated from stores
     staffs = tt.remove_column(staffs, "street")
     # The manager of employees 9, 10 is 8 not 7
@@ -59,7 +61,7 @@ def transform_staffs(staffs: pl.DataFrame, stores: pl.DataFrame) -> pl.DataFrame
 def transform_stores(stores: pl.DataFrame) -> pl.DataFrame:
     """Performs transformation on stores"""
     # Add id column
-    stores = tt.add_ID(stores, "store_id")
+    stores = tt.add_ID(stores, pks["stores"][0])
     # Remove surrounding whitespace from street
     stores = tt.remove_surrounding(stores, "street")
     # Splits street into street_nr and street
@@ -93,7 +95,7 @@ def transform_stocks(
 ) -> pl.DataFrame:
     """Performs transformation on stocks using related tables"""
     # Use id from stores
-    stocks = tt.change_to_foreign_ID(stocks, stores, "store_name", "store_id", "name", "store_id")
+    stocks = tt.change_to_foreign_ID(stocks, stores, "store_name", pks["stores"][0], "name", pks["stores"][0])
     return stocks
 
 
@@ -133,9 +135,9 @@ def transform_all(tables: dict[str : pl.DataFrame]) -> dict[str : pl.DataFrame]:
 def main():
     # EXTRACT
     table_dict = {}
-    tables = get_order()
+    tables = t_ord.get_order()
     for name in tables:
-        table_dict[name] = extract_data.extract_fallback(name)
+        table_dict[name] = extract_data.extract_with_fallback(name)
 
     # TRANSFORM
     t_dict = transform_all(table_dict)
