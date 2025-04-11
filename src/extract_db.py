@@ -6,6 +6,7 @@ from get_path import online_creds_path as cred_path
 import json
 import mysql.connector
 import polars as pl
+from exceptions import DictNotFoundError
 
 
 def db_connection(
@@ -19,8 +20,12 @@ def db_connection(
     Returns:
         MySQL connection: Connection to the database
     """
-    with open(credentials_path) as json_credentials:
-        credentials: dict = json.load(json_credentials)
+    try:
+        with open(credentials_path) as json_credentials:
+            credentials: dict = json.load(json_credentials)
+    except FileNotFoundError:
+        print(f"No (credentials) file at {credentials_path}!")
+        raise DictNotFoundError
     try:
         connection = mysql.connector.connect(
             host=credentials["IP"],
@@ -49,7 +54,7 @@ def extract_db(table: str, path: str | None = cred_path()) -> pl.DataFrame:
         path = cred_path()
     try:
         connection = db_connection(path)
-    except:
+    except ConnectionError:
         print(f"Could not connect to DB {table}")
         raise ConnectionError
     cursor = connection.cursor()

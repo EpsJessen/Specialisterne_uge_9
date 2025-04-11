@@ -1,6 +1,6 @@
 def get_order() -> list[str]:
     """
-    Give the tables in an order such that all tables a given table 
+    Give the tables in an order such that all tables a given table
     depends on is placed before that table
     - can be done since we have no circular dependencies
     """
@@ -33,7 +33,7 @@ def get_pks() -> dict[str, list[str]]:
 
 
 def get_fks() -> dict[str, list[dict[str, str | list[str]]] | None]:
-    """Dictionary of foreign keys of tables, as well as the tables where 
+    """Dictionary of foreign keys of tables, as well as the tables where
     the keys are found"""
     pks = get_pks()
     return {

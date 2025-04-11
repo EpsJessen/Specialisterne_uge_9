@@ -5,6 +5,7 @@ import polars as pl
 import extract_data
 import transform_table as tt
 import table_order_and_keys as t_ord
+from exceptions import WrongTablesError
 
 pks = t_ord.get_pks()
 fks = t_ord.get_fks()
@@ -109,6 +110,10 @@ def transform_all(tables: dict[str : pl.DataFrame]) -> dict[str : pl.DataFrame]:
         dict[str : pl.DataFrame]: The transformed tables
     """
     # TRANSFORM
+    try:
+        assert(tables.keys()==set(t_ord.get_order()))
+    except:
+        raise WrongTablesError
     stores = transform_stores(tables["stores"])
     staffs = transform_staffs(tables["staffs"], stores)
     customers = transform_customers(tables["customers"])

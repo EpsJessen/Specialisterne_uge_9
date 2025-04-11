@@ -4,6 +4,8 @@ from extract_db import extract_db
 from extract_csv import extract_csv
 from enum import Enum
 import get_path
+from exceptions import TableNotDefinedError, DictNotFoundError, ExtractionError
+from requests.exceptions import Timeout
 
 
 class TableTypes(Enum):
@@ -50,8 +52,7 @@ def extract_predefined(table: str, **kwargs):
         case "brands" | "categories" | "products" | "stocks":
             return extract(table, TableTypes.DB, **kwargs)
         case _:
-            print("Undefined table")
-            raise ValueError
+            raise TableNotDefinedError
 
 
 def extract_predefined_local(table: str, **kwargs):
@@ -63,8 +64,7 @@ def extract_predefined_local(table: str, **kwargs):
         case "brands" | "categories" | "products" | "stocks":
             return extract(table, TableTypes.CSV, location=get_path.db_path(table))
         case _:
-            print("Undefined table")
-            raise ValueError
+            raise TableNotDefinedError
 
 
 def extract_with_fallback(table: str, **kwargs):
@@ -74,13 +74,17 @@ def extract_with_fallback(table: str, **kwargs):
     """
     try:
         return extract_predefined(table, **kwargs)
-    except ValueError:
+    except TableNotDefinedError:
         print(f"Table named {table} not defined")
-    except:
+    except FileNotFoundError:
+        print(f"No file matching table found!")
+        raise FileNotFoundError
+    except Timeout | ConnectionError | DictNotFoundError:
         try:
             return extract_predefined_local(table, **kwargs)
         except:
             print(f"Could not find table {table} locally")
+            raise ExtractionError
 
 
 def main():

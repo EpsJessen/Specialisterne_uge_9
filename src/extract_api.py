@@ -6,6 +6,7 @@ import requests
 import polars as pl
 import json
 from get_path import online_creds_path as cred_path
+from exceptions import DictNotFoundError
 
 
 def api_get(ip: str, port: int, dataset: str) -> pl.DataFrame:
@@ -51,9 +52,13 @@ def extract_api(table: str, path: str | None = cred_path()) -> pl.DataFrame:
     if path == None:
         path = cred_path()
 
-    with open(path) as credentials_file:
-        json_credentials = credentials_file.read()
-    credentials = json.loads(json_credentials)
+    try:
+        with open(path) as credentials_file:
+            json_credentials = credentials_file.read()
+        credentials = json.loads(json_credentials)
+    except FileNotFoundError:
+        print(f"No (credentials) file at {path}!")
+        raise DictNotFoundError
     return api_get(credentials["IP"], credentials["API"]["PORT"], table)
 
 
