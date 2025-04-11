@@ -38,7 +38,10 @@ def change_to_foreign_ID(
     relevant_local_column = table[[old_column]]
     # Generate column of id values corresponding to local values in limitted foreign table
     matching_ids = relevant_local_column.join(
-        relevant_foreign_columns, how="left", left_on=old_column, right_on=old_foreign_column
+        relevant_foreign_columns,
+        how="left",
+        left_on=old_column,
+        right_on=old_foreign_column,
     )[new_foreign_column]
     # Add id column to local table with chosen name
     table = table.with_columns(matching_ids.alias(new_column))
@@ -77,15 +80,12 @@ def change_column_name(
 
 
 def split_prepended(
-        table: pl.DataFrame,
-        column: str,
-        nr_column_name: str,
-        **kwargs: str
+    table: pl.DataFrame, column: str, nr_column_name: str, **kwargs: str
 ) -> pl.DataFrame:
     "Move prepended substring from string to separate column"
     if kwargs.get("rest_column_name") is None:
         rest_column_name = column
-    
+
     table = table.with_columns(
         pl.col(column)
         .str.splitn(" ", 2)
@@ -95,11 +95,13 @@ def split_prepended(
     table = remove_column(table, column)
     return table.unnest("splits")
 
+
 def remove_surrounding(table: pl.DataFrame, column: str) -> pl.DataFrame:
     "Removes surrounding whitespace from column"
-    #For some reason does not recognize str.strip() anymore?
-    return table.with_columns(pl.col(column).str.strip_chars_end().str.strip_chars_start())
-
+    # For some reason does not recognize str.strip() anymore?
+    return table.with_columns(
+        pl.col(column).str.strip_chars_end().str.strip_chars_start()
+    )
 
 
 def main():
