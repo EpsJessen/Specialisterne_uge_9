@@ -30,55 +30,64 @@ def extract(
     Returns:
         pl.DataFrame: The extracted table
     """
-    if type == TableTypes.CSV or (
-        table in ["staffs", "stores"] and type == TableTypes.NOT_SET
-    ):
-        return extract_csv(table, path=kwargs.get("location", None))
-
-    elif type == TableTypes.API or (
-        table in ["customers", "order_items", "orders"] and type == TableTypes.NOT_SET
-    ):
-        return extract_api(table, path=kwargs.get("credentials", None))
-
-    elif type == TableTypes.DB or (
-        table in ["brands", "categories", "products", "stocks"]
-        and type == TableTypes.NOT_SET
-    ):
-        return extract_db(table, path=kwargs.get("credentials", None))
-
-    else:
-        raise ValueError
+    match type:
+        case TableTypes.CSV:
+            return extract_csv(table, path=kwargs.get("location", None))
+        case TableTypes.API:
+            return extract_api(table, path=kwargs.get("credentials", None))
+        case TableTypes.DB:
+            return extract_db(table, path=kwargs.get("credentials", None))
+        case _:
+            raise ValueError
 
 
-def extract_fallback(table: str):
+def extract_predefined(table: str, **kwargs):
+    match table:
+        case "staffs" | "stores":
+            return extract(table, TableTypes.CSV, **kwargs)
+        case "customers" | "order_items" | "orders":
+            return extract(table, TableTypes.API, **kwargs)
+        case "brands" | "categories" | "products" | "stocks":
+            return extract(table, TableTypes.DB, **kwargs)
+        case _:
+            print("Undefined table")
+            raise ValueError
+
+
+def extract_predefined_local(table: str, **kwargs):
+    match table.lower():
+        case "staffs" | "stores":
+            return extract(table, TableTypes.CSV, **kwargs)
+        case "customers" | "order_items" | "orders":
+            return extract(table, TableTypes.CSV, location=get_path.api_path(table))
+        case "brands" | "categories" | "products" | "stocks":
+            return extract(table, TableTypes.CSV, location=get_path.db_path(table))
+        case _:
+            print("Undefined table")
+            raise ValueError
+
+
+def extract_with_fallback(table: str, **kwargs):
     """
-    Extract table, preferably at correct location, 
+    Extract table, preferably at correct location,
     but otherwise from local file
     """
-    if table in ["staffs", "stores"]:
-        return extract(table)
-    elif table in ["customers", "order_items", "orders"]:
+    try:
+        return extract_predefined(table, **kwargs)
+    except ValueError:
+        print(f"Table named {table} not defined")
+    except:
         try:
-            return extract(table)
+            return extract_predefined_local(table, **kwargs)
         except:
-            print(f"Filling in local version of {table}")
-            return extract(table, TableTypes.CSV, location=get_path.api_path(table))
-    elif table in ["brands", "categories", "products", "stocks"]:
-        try:
-            return extract(table)
-        except:
-            print(f"Filling in local version of {table}")
-            return extract(table, TableTypes.CSV, location=get_path.db_path(table))
-    else:
-        print("Table not recognized")
-        raise ValueError
+            print(f"Could not find table {table} locally")
 
 
 def main():
-    staff_df = extract("staffs")
+    staff_df = extract_with_fallback("staffs")
     print(staff_df.head())
 
-    brands_df = extract("brands")
+    brands_df = extract_with_fallback("brands")
     print(brands_df.head())
 
 
