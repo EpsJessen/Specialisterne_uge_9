@@ -100,7 +100,7 @@ def remove_surrounding(table: pl.DataFrame, column: str) -> pl.DataFrame:
     "Removes surrounding whitespace from column"
     # For some reason does not recognize str.strip() anymore?
     return table.with_columns(
-        pl.col(column).str.strip_chars_end().str.strip_chars_start()
+        pl.col(column).str.strip_chars()
     )
 
 
