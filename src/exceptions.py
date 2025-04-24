@@ -1,14 +1,14 @@
-class TableNotDefinedError(Exception):
+class TableNotDefinedError(BaseException):
     "Raised when the table seached for is not defined"
     pass
 
-class DictNotFoundError(Exception):
+class DictNotFoundError(BaseException):
     "Raised when there is no dictionary at the location"
     pass
 
-class ExtractionError(Exception):
+class ExtractionError(BaseException):
     "Raise when extraction fails"
     pass
 
-class WrongTablesError(Exception):
+class WrongTablesError(BaseException):
     "The provided tables does not match the tables defined in the task"
